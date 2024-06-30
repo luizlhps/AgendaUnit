@@ -1,0 +1,6 @@
+@AgendaUnit.Web_HostAddress = http://localhost:5245
+
+GET {{AgendaUnit.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Pacotes necessários para o projeto -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <!-- Versão específica do Autofac.Extensions.DependencyInjection -->
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6" PrivateAssets="all" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <!-- Outros pacotes necessários -->
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Referências de projetos -->
+    <ProjectReference Include="..\AgendaUnit.Domain\AgendaUnit.Domain.csproj" />
+    <ProjectReference Include="..\AgendaUnit.Application\AgendaUnit.Application.csproj" />
+    <!-- Outras referências de projetos -->
+  </ItemGroup>
+</Project>

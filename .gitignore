@@ -1,0 +1,27 @@
+# Arquivos do Visual Studio
+.vs/
+
+# Arquivos binários, objetos e caches
+bin/
+obj/
+
+# Arquivos de configuração sensíveis
+appsettings.json
+appsettings.*.json
+secrets.json
+
+# Arquivos de log e debug
+*.log
+*.debug
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de usuário específicos
+*.user
+
+# Arquivos de build do MSBuild
+*.swp
+*.suo
+*.userprefs
