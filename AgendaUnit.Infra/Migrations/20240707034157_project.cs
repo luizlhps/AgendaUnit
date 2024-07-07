@@ -7,41 +7,23 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class project : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "customer",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    phone = table.Column<string>(type: "text", nullable: false),
-                    email = table.Column<string>(type: "text", nullable: false),
-                    companyid = table.Column<int>(type: "integer", nullable: false),
-                    uuid = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_customer", x => x.id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "businesshour",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    companyid = table.Column<int>(type: "integer", nullable: false),
-                    dayofweek = table.Column<string>(type: "text", nullable: false),
-                    openingtime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    closingtime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    uuid = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    company_id = table.Column<int>(type: "integer", nullable: false),
+                    day_of_week = table.Column<string>(type: "text", nullable: false),
+                    opening_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    closing_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,10 +37,10 @@ namespace AgendaUnit.Infra.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    typecompany = table.Column<string>(type: "text", nullable: false),
-                    ownerid = table.Column<int>(type: "integer", nullable: false),
-                    uuid = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    type_company = table.Column<string>(type: "text", nullable: false),
+                    owner_id = table.Column<int>(type: "integer", nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,25 +48,25 @@ namespace AgendaUnit.Infra.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "companycustomer",
+                name: "customer",
                 columns: table => new
                 {
-                    companyid = table.Column<int>(type: "integer", nullable: false),
-                    customersid = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    phone = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    company_id = table.Column<int>(type: "integer", nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_companycustomer", x => new { x.companyid, x.customersid });
+                    table.PrimaryKey("pk_customer", x => x.id);
                     table.ForeignKey(
-                        name: "fk_companycustomer_company_companyid",
-                        column: x => x.companyid,
+                        name: "fk_customer_company_company_id",
+                        column: x => x.company_id,
                         principalTable: "company",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_companycustomer_customer_customersid",
-                        column: x => x.customersid,
-                        principalTable: "customer",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -98,17 +80,18 @@ namespace AgendaUnit.Infra.Migrations
                     name = table.Column<string>(type: "text", nullable: false),
                     duration = table.Column<string>(type: "text", nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: false),
-                    companyid = table.Column<int>(type: "integer", nullable: false),
-                    uuid = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    company_id = table.Column<int>(type: "integer", nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_service", x => x.id);
                     table.ForeignKey(
-                        name: "fk_service_company_companyid",
-                        column: x => x.companyid,
+                        name: "fk_service_company_company_id",
+                        column: x => x.company_id,
                         principalTable: "company",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -124,22 +107,20 @@ namespace AgendaUnit.Infra.Migrations
                     login = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
-                    role = table.Column<string>(type: "text", nullable: false),
-                    recoverytoken = table.Column<string>(type: "text", nullable: false),
-                    gender = table.Column<string>(type: "text", nullable: false),
-                    birthdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    role = table.Column<long>(type: "bigint", nullable: false),
+                    recovery_token = table.Column<string>(type: "text", nullable: false),
                     phone = table.Column<string>(type: "text", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
-                    companyid = table.Column<int>(type: "integer", nullable: true),
-                    uuid = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    company_id = table.Column<int>(type: "integer", nullable: true),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_user", x => x.id);
                     table.ForeignKey(
-                        name: "fk_user_company_companyid",
-                        column: x => x.companyid,
+                        name: "fk_user_company_company_id",
+                        column: x => x.company_id,
                         principalTable: "company",
                         principalColumn: "id");
                 });
@@ -150,122 +131,120 @@ namespace AgendaUnit.Infra.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    totalprice = table.Column<decimal>(type: "numeric", nullable: false),
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     hours = table.Column<string>(type: "text", nullable: false),
                     notes = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: false),
-                    cancelnote = table.Column<string>(type: "text", nullable: true),
-                    companyid = table.Column<int>(type: "integer", nullable: false),
-                    staffuserid = table.Column<int>(type: "integer", nullable: false),
-                    serviceid = table.Column<int>(type: "integer", nullable: false),
-                    customerid = table.Column<int>(type: "integer", nullable: false),
-                    uuid = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    cancel_note = table.Column<string>(type: "text", nullable: true),
+                    total_price = table.Column<decimal>(type: "numeric", nullable: true),
+                    staff_user_id = table.Column<int>(type: "integer", nullable: false),
+                    service_id = table.Column<int>(type: "integer", nullable: false),
+                    company_id = table.Column<int>(type: "integer", nullable: false),
+                    customer_id = table.Column<int>(type: "integer", nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_scheduling", x => x.id);
                     table.ForeignKey(
-                        name: "fk_scheduling_company_companyid",
-                        column: x => x.companyid,
+                        name: "fk_scheduling_company_company_id",
+                        column: x => x.company_id,
                         principalTable: "company",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_scheduling_customer_customerid",
-                        column: x => x.customerid,
+                        name: "fk_scheduling_customer_customer_id",
+                        column: x => x.customer_id,
                         principalTable: "customer",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_scheduling_service_serviceid",
-                        column: x => x.serviceid,
+                        name: "fk_scheduling_service_service_id",
+                        column: x => x.service_id,
                         principalTable: "service",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_scheduling_user_staffuserid",
-                        column: x => x.staffuserid,
+                        name: "fk_scheduling_user_staff_user_id",
+                        column: x => x.staff_user_id,
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_businesshour_companyid",
+                name: "ix_businesshour_company_id",
                 table: "businesshour",
-                column: "companyid");
+                column: "company_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_company_ownerid",
+                name: "ix_company_owner_id",
                 table: "company",
-                column: "ownerid");
+                column: "owner_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_companycustomer_customersid",
-                table: "companycustomer",
-                column: "customersid");
+                name: "ix_customer_company_id",
+                table: "customer",
+                column: "company_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_scheduling_companyid",
+                name: "ix_scheduling_company_id",
                 table: "scheduling",
-                column: "companyid");
+                column: "company_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_scheduling_customerid",
+                name: "ix_scheduling_customer_id",
                 table: "scheduling",
-                column: "customerid");
+                column: "customer_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_scheduling_serviceid",
+                name: "ix_scheduling_service_id",
                 table: "scheduling",
-                column: "serviceid");
+                column: "service_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_scheduling_staffuserid",
+                name: "ix_scheduling_staff_user_id",
                 table: "scheduling",
-                column: "staffuserid");
+                column: "staff_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_service_companyid",
+                name: "ix_service_company_id",
                 table: "service",
-                column: "companyid");
+                column: "company_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_companyid",
+                name: "ix_user_company_id",
                 table: "user",
-                column: "companyid");
+                column: "company_id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_businesshour_company_companyid",
+                name: "fk_businesshour_company_company_id",
                 table: "businesshour",
-                column: "companyid",
+                column: "company_id",
                 principalTable: "company",
                 principalColumn: "id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "fk_company_user_ownerid",
+                name: "fk_company_user_owner_id",
                 table: "company",
-                column: "ownerid",
+                column: "owner_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "fk_user_company_companyid",
+                name: "fk_user_company_company_id",
                 table: "user");
 
             migrationBuilder.DropTable(
                 name: "businesshour");
-
-            migrationBuilder.DropTable(
-                name: "companycustomer");
 
             migrationBuilder.DropTable(
                 name: "scheduling");

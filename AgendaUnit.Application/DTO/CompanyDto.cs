@@ -1,4 +1,5 @@
 using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Application.DTO;
 

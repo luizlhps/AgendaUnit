@@ -15,18 +15,16 @@ namespace AgendaUnit.Domain.models
 
         public string Password { get; set; }
 
-        public string Role { get; set; }
+        public long Role { get; set; }
 
+        [Column(name: "recovery_token")]
         public string RecoveryToken { get; set; }
-
-        public string Gender { get; set; }
-
-        public DateTime? BirthDate { get; set; }
 
         public string Phone { get; set; }
 
         public string Status { get; set; }
 
+        [Column(name: "company_id")]
         public int? CompanyId { get; set; }
 
         public Company Company { get; set; }

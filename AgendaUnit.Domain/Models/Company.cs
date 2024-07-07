@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Domain.models
 {
@@ -6,8 +8,10 @@ namespace AgendaUnit.Domain.models
     {
         public string Name { get; set; }
 
+        [Column(name: "type_company")]
         public string TypeCompany { get; set; }
 
+        [Column(name: "owner_id")]
         public int OwnerId { get; set; }
 
         public User Owner { get; set; }
@@ -18,6 +22,6 @@ namespace AgendaUnit.Domain.models
 
         public List<Scheduling>? Scheduling { get; set; }
 
-        public List<Service> Services { get; set; }
+        public List<Service>? Services { get; set; }
     }
 }

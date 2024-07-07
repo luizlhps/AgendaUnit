@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Infra.Context;
 public class AppDbContext : DbContext
@@ -18,10 +19,12 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Company>()
-            .HasOne(c => c.Owner)
-            .WithMany()
-            .HasForeignKey(c => c.OwnerId)
-            .OnDelete(DeleteBehavior.Restrict);
+                    .HasOne(c => c.Owner)
+                    .WithMany()
+                    .HasForeignKey(c => c.OwnerId);
+
+        modelBuilder.Entity<Company>().HasIndex(c => c.OwnerId).IsUnique();
+
 
         base.OnModelCreating(modelBuilder);
 

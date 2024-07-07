@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240630165635_fix_guid_field")]
-    partial class fix_guid_field
+    [Migration("20240707034157_project")]
+    partial class project
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,83 @@ namespace AgendaUnit.Infra.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AgendaUnit.Domain.Models.Scheduling", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CancelNote")
+                        .HasColumnType("text")
+                        .HasColumnName("cancel_note");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("customer_id");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Hours")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("hours");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdeleted");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer")
+                        .HasColumnName("service_id");
+
+                    b.Property<int>("StaffUserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("staff_user_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
+
+                    b.Property<decimal?>("TotalPrice")
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_price");
+
+                    b.HasKey("Id")
+                        .HasName("pk_scheduling");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_scheduling_company_id");
+
+                    b.HasIndex("CustomerId")
+                        .HasDatabaseName("ix_scheduling_customer_id");
+
+                    b.HasIndex("ServiceId")
+                        .HasDatabaseName("ix_scheduling_service_id");
+
+                    b.HasIndex("StaffUserId")
+                        .HasDatabaseName("ix_scheduling_staff_user_id");
+
+                    b.ToTable("scheduling");
+                });
 
             modelBuilder.Entity("AgendaUnit.Domain.models.BusinessHours", b =>
                 {
@@ -36,34 +113,34 @@ namespace AgendaUnit.Infra.Migrations
 
                     b.Property<DateTime>("ClosingTime")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("closingtime");
+                        .HasColumnName("closing_time");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer")
-                        .HasColumnName("companyid");
+                        .HasColumnName("company_id");
 
                     b.Property<string>("DayOfWeek")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("dayofweek");
+                        .HasColumnName("day_of_week");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdeleted");
 
                     b.Property<DateTime>("OpeningTime")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("openingtime");
+                        .HasColumnName("opening_time");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
 
-                    b.Property<Guid?>("Uuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("uuid");
-
                     b.HasKey("Id")
                         .HasName("pk_businesshour");
 
                     b.HasIndex("CompanyId")
-                        .HasDatabaseName("ix_businesshour_companyid");
+                        .HasDatabaseName("ix_businesshour_company_id");
 
                     b.ToTable("businesshour");
                 });
@@ -77,6 +154,10 @@ namespace AgendaUnit.Infra.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdeleted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -84,7 +165,7 @@ namespace AgendaUnit.Infra.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer")
-                        .HasColumnName("ownerid");
+                        .HasColumnName("owner_id");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone")
@@ -93,17 +174,14 @@ namespace AgendaUnit.Infra.Migrations
                     b.Property<string>("TypeCompany")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("typecompany");
-
-                    b.Property<Guid?>("Uuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("uuid");
+                        .HasColumnName("type_company");
 
                     b.HasKey("Id")
                         .HasName("pk_company");
 
                     b.HasIndex("OwnerId")
-                        .HasDatabaseName("ix_company_ownerid");
+                        .IsUnique()
+                        .HasDatabaseName("ix_company_owner_id");
 
                     b.ToTable("company");
                 });
@@ -119,12 +197,16 @@ namespace AgendaUnit.Infra.Migrations
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer")
-                        .HasColumnName("companyid");
+                        .HasColumnName("company_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdeleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -140,92 +222,13 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
 
-                    b.Property<Guid?>("Uuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("uuid");
-
                     b.HasKey("Id")
                         .HasName("pk_customer");
 
-                    b.ToTable("customer");
-                });
-
-            modelBuilder.Entity("AgendaUnit.Domain.models.Scheduling", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CancelNote")
-                        .HasColumnType("text")
-                        .HasColumnName("cancelnote");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer")
-                        .HasColumnName("companyid");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer")
-                        .HasColumnName("customerid");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date");
-
-                    b.Property<string>("Hours")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("hours");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer")
-                        .HasColumnName("serviceid");
-
-                    b.Property<int>("StaffUserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("staffuserid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("numeric")
-                        .HasColumnName("totalprice");
-
-                    b.Property<Guid?>("Uuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("uuid");
-
-                    b.HasKey("Id")
-                        .HasName("pk_scheduling");
-
                     b.HasIndex("CompanyId")
-                        .HasDatabaseName("ix_scheduling_companyid");
+                        .HasDatabaseName("ix_customer_company_id");
 
-                    b.HasIndex("CustomerId")
-                        .HasDatabaseName("ix_scheduling_customerid");
-
-                    b.HasIndex("ServiceId")
-                        .HasDatabaseName("ix_scheduling_serviceid");
-
-                    b.HasIndex("StaffUserId")
-                        .HasDatabaseName("ix_scheduling_staffuserid");
-
-                    b.ToTable("scheduling");
+                    b.ToTable("customer");
                 });
 
             modelBuilder.Entity("AgendaUnit.Domain.models.Service", b =>
@@ -237,14 +240,22 @@ namespace AgendaUnit.Infra.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean")
+                        .HasColumnName("ativo");
+
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer")
-                        .HasColumnName("companyid");
+                        .HasColumnName("company_id");
 
                     b.Property<string>("Duration")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("duration");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdeleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -255,24 +266,19 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("price");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
 
-                    b.Property<Guid?>("Uuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("uuid");
-
                     b.HasKey("Id")
                         .HasName("pk_service");
 
                     b.HasIndex("CompanyId")
-                        .HasDatabaseName("ix_service_companyid");
+                        .HasDatabaseName("ix_service_company_id");
 
                     b.ToTable("service");
                 });
@@ -286,23 +292,18 @@ namespace AgendaUnit.Infra.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("birthdate");
-
                     b.Property<int?>("CompanyId")
                         .HasColumnType("integer")
-                        .HasColumnName("companyid");
+                        .HasColumnName("company_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("gender");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isdeleted");
 
                     b.Property<string>("Login")
                         .IsRequired()
@@ -327,11 +328,10 @@ namespace AgendaUnit.Infra.Migrations
                     b.Property<string>("RecoveryToken")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("recoverytoken");
+                        .HasColumnName("recovery_token");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<long>("Role")
+                        .HasColumnType("bigint")
                         .HasColumnName("role");
 
                     b.Property<string>("Status")
@@ -343,91 +343,44 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
 
-                    b.Property<Guid?>("Uuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("uuid");
-
                     b.HasKey("Id")
                         .HasName("pk_user");
 
                     b.HasIndex("CompanyId")
-                        .HasDatabaseName("ix_user_companyid");
+                        .HasDatabaseName("ix_user_company_id");
 
                     b.ToTable("user");
                 });
 
-            modelBuilder.Entity("CompanyCustomer", b =>
-                {
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer")
-                        .HasColumnName("companyid");
-
-                    b.Property<int>("CustomersId")
-                        .HasColumnType("integer")
-                        .HasColumnName("customersid");
-
-                    b.HasKey("CompanyId", "CustomersId")
-                        .HasName("pk_companycustomer");
-
-                    b.HasIndex("CustomersId")
-                        .HasDatabaseName("ix_companycustomer_customersid");
-
-                    b.ToTable("companycustomer");
-                });
-
-            modelBuilder.Entity("AgendaUnit.Domain.models.BusinessHours", b =>
-                {
-                    b.HasOne("AgendaUnit.Domain.models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_businesshour_company_companyid");
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("AgendaUnit.Domain.models.Company", b =>
-                {
-                    b.HasOne("AgendaUnit.Domain.models.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_company_user_ownerid");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("AgendaUnit.Domain.models.Scheduling", b =>
+            modelBuilder.Entity("AgendaUnit.Domain.Models.Scheduling", b =>
                 {
                     b.HasOne("AgendaUnit.Domain.models.Company", "Company")
                         .WithMany("Scheduling")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_scheduling_company_companyid");
+                        .HasConstraintName("fk_scheduling_company_company_id");
 
                     b.HasOne("AgendaUnit.Domain.models.Customer", "Customer")
                         .WithMany("Scheduling")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_scheduling_customer_customerid");
+                        .HasConstraintName("fk_scheduling_customer_customer_id");
 
                     b.HasOne("AgendaUnit.Domain.models.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_scheduling_service_serviceid");
+                        .HasConstraintName("fk_scheduling_service_service_id");
 
                     b.HasOne("AgendaUnit.Domain.models.User", "StaffUser")
                         .WithMany()
                         .HasForeignKey("StaffUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_scheduling_user_staffuserid");
+                        .HasConstraintName("fk_scheduling_user_staff_user_id");
 
                     b.Navigation("Company");
 
@@ -438,6 +391,42 @@ namespace AgendaUnit.Infra.Migrations
                     b.Navigation("StaffUser");
                 });
 
+            modelBuilder.Entity("AgendaUnit.Domain.models.BusinessHours", b =>
+                {
+                    b.HasOne("AgendaUnit.Domain.models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_businesshour_company_company_id");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("AgendaUnit.Domain.models.Company", b =>
+                {
+                    b.HasOne("AgendaUnit.Domain.models.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_company_user_owner_id");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("AgendaUnit.Domain.models.Customer", b =>
+                {
+                    b.HasOne("AgendaUnit.Domain.models.Company", "Company")
+                        .WithMany("Customers")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_customer_company_company_id");
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("AgendaUnit.Domain.models.Service", b =>
                 {
                     b.HasOne("AgendaUnit.Domain.models.Company", "Company")
@@ -445,7 +434,7 @@ namespace AgendaUnit.Infra.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_service_company_companyid");
+                        .HasConstraintName("fk_service_company_company_id");
 
                     b.Navigation("Company");
                 });
@@ -455,30 +444,15 @@ namespace AgendaUnit.Infra.Migrations
                     b.HasOne("AgendaUnit.Domain.models.Company", "Company")
                         .WithMany("Users")
                         .HasForeignKey("CompanyId")
-                        .HasConstraintName("fk_user_company_companyid");
+                        .HasConstraintName("fk_user_company_company_id");
 
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("CompanyCustomer", b =>
-                {
-                    b.HasOne("AgendaUnit.Domain.models.Company", null)
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_companycustomer_company_companyid");
-
-                    b.HasOne("AgendaUnit.Domain.models.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_companycustomer_customer_customersid");
-                });
-
             modelBuilder.Entity("AgendaUnit.Domain.models.Company", b =>
                 {
+                    b.Navigation("Customers");
+
                     b.Navigation("Scheduling");
 
                     b.Navigation("Services");
