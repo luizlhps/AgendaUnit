@@ -2,7 +2,7 @@ using AgendaUnit.Application.DTO;
 using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Application.Services;
-using AgendaUnit.Domain.Exceptions;
+using AgendaUnit.Shared.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgendaUnit.Web.Controllers;
@@ -21,21 +21,8 @@ public class UsersController : ControllerBase
     [HttpGet("{id:int}", Name = "GetUserById")]
     async public Task<ActionResult<UserObtainedDto>> GetbyId(int id)
     {
-        try
-        {
-            return Ok(await _userAppService.GetByIdWithCompany<UserObtainedDto>(id));
+        return Ok(await _userAppService.GetByIdWithCompany<UserObtainedDto>(id));
 
-        }
-        catch (EntityNotFoundException ex)
-        {
-
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            // Log a exceção ou trate outros cenários de erro
-            return StatusCode(500, $"Internal Server Error {ex.Message}");
-        }
     }
     [HttpGet]
     async public Task<ActionResult<UserListedDto>> GetAll([FromQuery] UserListDto userListDto)

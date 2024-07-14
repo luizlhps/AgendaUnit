@@ -1,6 +1,7 @@
 
 using System.Text.Json.Serialization;
 using AgendaUnit.Infra;
+using AgendaUnit.Web.Middlewares;
 using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+app.ConfigureGlobalExceptionsHandler();
 
 if (app.Environment.IsDevelopment())
 {

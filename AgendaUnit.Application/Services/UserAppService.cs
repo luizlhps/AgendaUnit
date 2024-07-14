@@ -4,6 +4,7 @@ using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
+using AgendaUnit.Shared.Exceptions;
 using AutoMapper;
 
 namespace AgendaUnit.Application.Services;
@@ -22,6 +23,12 @@ public class UserAppService : Crud<User, IUserRepository, IUserService>, IUserAp
     async public Task<TOutputDto> GetByIdWithCompany<TOutputDto>(int id) where TOutputDto : class
     {
         var user = await _baseService.GetByIdWithCompany(id);
+
+        if (user == null)
+        {
+            throw new EntityNotFoundException($"{id} is not found");
+        }
+
         return _mapper.Map<TOutputDto>(user);
     }
 

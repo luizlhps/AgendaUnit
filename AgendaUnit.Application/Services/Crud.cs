@@ -1,9 +1,9 @@
 using AgendaUnit.Application.Services;
-using AgendaUnit.Domain.Exceptions;
 using AgendaUnit.Domain.Interfaces.Models;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
+using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Shared.Queries;
 using AutoMapper;
 
@@ -81,7 +81,7 @@ namespace AgendaUnit.Domain.Services
 
                 if (entity == null)
                 {
-                    throw new EntityNotFoundException(id, "sdsd");
+                    throw new EntityNotFoundException($"{id} is not found");
                 }
 
                 return _mapper.Map<TOutputDto>(entity);
