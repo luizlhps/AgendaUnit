@@ -1,4 +1,4 @@
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Domain.Interfaces.Repositories;
 

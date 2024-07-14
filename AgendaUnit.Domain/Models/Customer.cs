@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using AgendaUnit.Domain.Models;
 
-namespace AgendaUnit.Domain.models;
+namespace AgendaUnit.Domain.Models;
 
 public class Customer : BaseEntity
 {
@@ -13,7 +13,6 @@ public class Customer : BaseEntity
 
     [Column(name: "company_id")]
     public int CompanyId { get; set; }
-
     public Company Company { get; set; }
 
     public List<Scheduling> Scheduling { get; set; }

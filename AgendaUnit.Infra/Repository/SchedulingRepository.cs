@@ -1,5 +1,5 @@
 using AgendaUnit.Domain.Interfaces.Repositories;
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Infra.Context;
 using AgendaUnit.Infrastructure.Repositories;

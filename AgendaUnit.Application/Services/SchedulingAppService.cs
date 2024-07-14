@@ -1,7 +1,7 @@
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
 using AutoMapper;

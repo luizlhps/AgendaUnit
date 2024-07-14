@@ -3,7 +3,7 @@ using AgendaUnit.Application.Mappers;
 using AgendaUnit.Application.Services;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
 using AgendaUnit.Infra.Context;
 using AgendaUnit.Infra.Repository;

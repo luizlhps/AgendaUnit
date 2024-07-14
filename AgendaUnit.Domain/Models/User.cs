@@ -1,9 +1,8 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
-namespace AgendaUnit.Domain.models
+
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AgendaUnit.Domain.Models
 {
     public class User : BaseEntity
     {
@@ -15,18 +14,21 @@ namespace AgendaUnit.Domain.models
 
         public string Password { get; set; }
 
-        public long Role { get; set; }
+
+        [Column(name: "role_id")]
+        public int RoleId { get; set; }
+        public Role Role { get; set; }
+
 
         [Column(name: "recovery_token")]
-        public string RecoveryToken { get; set; }
+        public string? RecoveryToken { get; set; }
+
 
         public string Phone { get; set; }
 
-        public string Status { get; set; }
 
         [Column(name: "company_id")]
         public int? CompanyId { get; set; }
-
         public Company Company { get; set; }
     }
 }

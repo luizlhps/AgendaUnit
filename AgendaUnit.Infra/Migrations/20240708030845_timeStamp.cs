@@ -7,27 +7,39 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class project : Migration
+    public partial class timeStamp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "businesshour",
+                name: "role",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    company_id = table.Column<int>(type: "integer", nullable: false),
-                    day_of_week = table.Column<string>(type: "text", nullable: false),
-                    opening_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    closing_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_businesshour", x => x.id);
+                    table.PrimaryKey("pk_role", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "status",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    isdeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_status", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -39,7 +51,7 @@ namespace AgendaUnit.Infra.Migrations
                     name = table.Column<string>(type: "text", nullable: false),
                     type_company = table.Column<string>(type: "text", nullable: false),
                     owner_id = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -57,7 +69,7 @@ namespace AgendaUnit.Infra.Migrations
                     phone = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
                     company_id = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -81,9 +93,9 @@ namespace AgendaUnit.Infra.Migrations
                     duration = table.Column<string>(type: "text", nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
+                    status_id = table.Column<int>(type: "integer", nullable: false),
                     company_id = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -93,6 +105,12 @@ namespace AgendaUnit.Infra.Migrations
                         name: "fk_service_company_company_id",
                         column: x => x.company_id,
                         principalTable: "company",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_service_status_status_id",
+                        column: x => x.status_id,
+                        principalTable: "status",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -107,12 +125,11 @@ namespace AgendaUnit.Infra.Migrations
                     login = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
-                    role = table.Column<long>(type: "bigint", nullable: false),
-                    recovery_token = table.Column<string>(type: "text", nullable: false),
+                    role_id = table.Column<int>(type: "integer", nullable: false),
+                    recovery_token = table.Column<string>(type: "text", nullable: true),
                     phone = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: false),
                     company_id = table.Column<int>(type: "integer", nullable: true),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -123,6 +140,12 @@ namespace AgendaUnit.Infra.Migrations
                         column: x => x.company_id,
                         principalTable: "company",
                         principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_user_role_role_id",
+                        column: x => x.role_id,
+                        principalTable: "role",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -134,14 +157,14 @@ namespace AgendaUnit.Infra.Migrations
                     date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     hours = table.Column<string>(type: "text", nullable: false),
                     notes = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
+                    status_id = table.Column<int>(type: "integer", nullable: false),
                     cancel_note = table.Column<string>(type: "text", nullable: true),
                     total_price = table.Column<decimal>(type: "numeric", nullable: true),
                     staff_user_id = table.Column<int>(type: "integer", nullable: false),
                     service_id = table.Column<int>(type: "integer", nullable: false),
                     company_id = table.Column<int>(type: "integer", nullable: false),
                     customer_id = table.Column<int>(type: "integer", nullable: false),
-                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     isdeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -166,17 +189,18 @@ namespace AgendaUnit.Infra.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "fk_scheduling_status_status_id",
+                        column: x => x.status_id,
+                        principalTable: "status",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "fk_scheduling_user_staff_user_id",
                         column: x => x.staff_user_id,
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_businesshour_company_id",
-                table: "businesshour",
-                column: "company_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_company_owner_id",
@@ -210,22 +234,29 @@ namespace AgendaUnit.Infra.Migrations
                 column: "staff_user_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_scheduling_status_id",
+                table: "scheduling",
+                column: "status_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_service_company_id",
                 table: "service",
                 column: "company_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_service_status_id",
+                table: "service",
+                column: "status_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_company_id",
                 table: "user",
                 column: "company_id");
 
-            migrationBuilder.AddForeignKey(
-                name: "fk_businesshour_company_company_id",
-                table: "businesshour",
-                column: "company_id",
-                principalTable: "company",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "ix_user_role_id",
+                table: "user",
+                column: "role_id");
 
             migrationBuilder.AddForeignKey(
                 name: "fk_company_user_owner_id",
@@ -240,11 +271,8 @@ namespace AgendaUnit.Infra.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "fk_user_company_company_id",
-                table: "user");
-
-            migrationBuilder.DropTable(
-                name: "businesshour");
+                name: "fk_company_user_owner_id",
+                table: "company");
 
             migrationBuilder.DropTable(
                 name: "scheduling");
@@ -256,10 +284,16 @@ namespace AgendaUnit.Infra.Migrations
                 name: "service");
 
             migrationBuilder.DropTable(
-                name: "company");
+                name: "status");
 
             migrationBuilder.DropTable(
                 name: "user");
+
+            migrationBuilder.DropTable(
+                name: "company");
+
+            migrationBuilder.DropTable(
+                name: "role");
         }
     }
 }

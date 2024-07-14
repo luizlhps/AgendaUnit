@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AgendaUnit.Domain\AgendaUnit.Domain.csproj" />
+    <ProjectReference Include="..\AgendaUnit.Shared\AgendaUnit.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />

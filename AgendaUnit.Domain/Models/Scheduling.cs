@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using AgendaUnit.Domain.models;
 
 namespace AgendaUnit.Domain.Models
 {
@@ -12,7 +10,9 @@ namespace AgendaUnit.Domain.Models
 
         public string Notes { get; set; }
 
-        public int Status { get; set; }
+        [Column(name: "status_id")]
+        public int StatusId { get; set; }
+        public Status Status { get; set; }
 
         [Column(name: "cancel_note")]
         public string? CancelNote { get; set; }
@@ -32,7 +32,6 @@ namespace AgendaUnit.Domain.Models
         public int CompanyId { get; set; }
         public Company Company { get; set; }
 
-        // Corrigindo o relacionamento para Customer
         [Column(name: "customer_id")]
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }

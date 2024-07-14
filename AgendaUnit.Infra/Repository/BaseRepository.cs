@@ -1,6 +1,7 @@
 
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Infra.Context;
+using AgendaUnit.Shared.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgendaUnit.Infrastructure.Repositories
@@ -19,10 +20,6 @@ namespace AgendaUnit.Infrastructure.Repositories
             return await _appDbContext.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll()
-        {
-            return await _appDbContext.Set<TEntity>().ToListAsync();
-        }
 
         public async Task<TEntity> Create(TEntity entity)
         {
@@ -52,6 +49,108 @@ namespace AgendaUnit.Infrastructure.Repositories
             await _appDbContext.SaveChangesAsync();
             return true;
         }
+
+        async public Task<PageResult<TEntity>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
+        where TInputDto : QueryParams
+        where TOutputDto : class
+        {
+
+            var pageResult = new PageResult<TEntity>
+            {
+                Items = [],
+                PageNumber = 1,
+                PageSize = 0,
+                TotalCount = 0
+            };
+
+            IQueryable<TEntity> query = _appDbContext.Set<TEntity>();
+
+            if (inputDto.Filters != null)
+            {
+                #region apply filter date of timestamp
+                if (inputDto.Filters.StartDate.HasValue && inputDto.Filters.EndDate.HasValue)
+                {
+                    query = query.Where(item => EF.Property<DateTime>(item, "timestamp") >= inputDto.Filters.StartDate.Value
+                                             && EF.Property<DateTime>(item, "timestamp") <= inputDto.Filters.EndDate.Value);
+                }
+                #endregion
+
+            }
+
+            #region apply filter search terms
+            var baseProperties = typeof(TInputDto).BaseType.GetProperties();
+
+            var dtoProperties = typeof(TInputDto).GetProperties()
+            .Where(dtoProperties => !baseProperties.Any(baseProperties => baseProperties.Name == dtoProperties.Name));
+
+            foreach (var property in dtoProperties)
+            {
+                var value = property.GetValue(inputDto, null);
+
+                if (value != null)
+                {
+                    if (property.PropertyType == typeof(string))
+                    {
+                        query = query.Where(item => EF.Property<string>(item, property.Name).Contains(value.ToString()));
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(bool))
+                    {
+                        query = query.Where(item => EF.Property<bool>(item, property.Name).Equals(value));
+                        continue;
+                    }
+                }
+            }
+
+            #endregion
+
+
+
+            #region apply pagination
+
+            // return all items if allrows is true
+            if (inputDto.PaginationProperties?.AllRows ?? false)
+            {
+                var items = await query.ToListAsync();
+
+                pageResult = new PageResult<TEntity>
+                {
+                    Items = items,
+                    PageNumber = 1,
+                    PageSize = items.Count,
+                    TotalCount = items.Count
+                };
+            }
+            else
+            {
+                int totalItems = await query.CountAsync();
+                int pageNumber = inputDto.PaginationProperties.PageNumber > 0 ? inputDto.PaginationProperties.PageNumber - 1 : 0;
+                int pageSize = inputDto.PaginationProperties.PageSize > 0 ? inputDto.PaginationProperties.PageSize : 10;
+                int totalPages = (int)Math.Ceiling((decimal)totalItems / pageSize);
+
+                if (pageNumber > totalPages)
+                {
+                    pageNumber = totalPages - 1;
+                }
+
+                query = query.Skip(pageNumber).Take(pageSize);
+
+                var items = await query.ToListAsync();
+
+                pageResult = new PageResult<TEntity>
+                {
+                    Items = items,
+                    PageNumber = pageNumber + 1,
+                    PageSize = pageSize,
+                    TotalCount = totalItems
+                };
+
+            }
+            #endregion
+
+            return pageResult;
+        }
+
 
 
     }

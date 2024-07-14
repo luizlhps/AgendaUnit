@@ -3,7 +3,8 @@ using AgendaUnit.Domain.Exceptions;
 using AgendaUnit.Domain.Interfaces.Models;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
+using AgendaUnit.Shared.Queries;
 using AutoMapper;
 
 namespace AgendaUnit.Domain.Services
@@ -46,13 +47,30 @@ namespace AgendaUnit.Domain.Services
             return _mapper.Map<TOutputDto>(deletedEntity);
         }
 
-        async public Task<IEnumerable<TOutputDto>> GetAll<TOutputDto>()
-             where TOutputDto : class
+        async public Task<PageResult<TOutputDto>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
+            where TInputDto : QueryParams
+            where TOutputDto : class
         {
-            var entites = await _baseService.GetAll();
 
-            return entites.Select(e => _mapper.Map<TOutputDto>(e));
+            var entities = await _baseService.GetAll<TInputDto, TOutputDto>(inputDto);
+
+            var pageResult = new PageResult<TOutputDto>
+            {
+                Items = [],
+                PageNumber = entities.PageNumber,
+                PageSize = entities.PageSize,
+                TotalCount = entities.TotalCount
+            };
+
+            if (entities.Items.Count > 0)
+            {
+                var teste = _mapper.Map<List<TOutputDto>>(entities.Items);
+                pageResult.Items = teste;
+            }
+
+            return pageResult;
         }
+
 
         async public Task<TOutputDto> GetById<TOutputDto>(int id)
             where TOutputDto : class

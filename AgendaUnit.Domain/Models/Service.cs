@@ -1,7 +1,9 @@
-namespace AgendaUnit.Domain.models;
+namespace AgendaUnit.Domain.Models;
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using AgendaUnit.Domain.Models;
+
 
 public class Service : BaseEntity
 {
@@ -13,7 +15,9 @@ public class Service : BaseEntity
 
     public bool Ativo { get; set; }
 
-    public int Status { get; set; }
+    [Column(name: "status_id")]
+    public int StatusId { get; set; }
+    public Status Status { get; set; }
 
     [Column(name: "company_id")]
     public int CompanyId { get; set; }

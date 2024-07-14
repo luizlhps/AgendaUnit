@@ -1,8 +1,8 @@
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Domain.Models;
 
-public class TypeRole : BaseEntity
+public class Role : BaseEntity
 {
     public string Name { get; set; }
 }

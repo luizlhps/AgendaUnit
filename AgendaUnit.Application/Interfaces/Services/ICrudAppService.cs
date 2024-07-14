@@ -1,3 +1,5 @@
+using AgendaUnit.Shared.Queries;
+
 namespace AgendaUnit.Application.Services;
 public interface ICrudAppService<TEntity>
 where TEntity : class, new()
@@ -9,7 +11,8 @@ where TEntity : class, new()
     Task<TOutputDto> GetById<TOutputDto>(int id)
         where TOutputDto : class;
 
-    Task<IEnumerable<TOutputDto>> GetAll<TOutputDto>()
+    Task<PageResult<TOutputDto>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
+         where TInputDto : QueryParams
         where TOutputDto : class;
 
     Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto)

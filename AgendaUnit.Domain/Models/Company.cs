@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using AgendaUnit.Domain.Models;
 
-namespace AgendaUnit.Domain.models
+namespace AgendaUnit.Domain.Models
 {
     public class Company : BaseEntity
     {
@@ -13,7 +13,6 @@ namespace AgendaUnit.Domain.models
 
         [Column(name: "owner_id")]
         public int OwnerId { get; set; }
-
         public User Owner { get; set; }
 
         public List<User>? Users { get; set; }

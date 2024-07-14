@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using AgendaUnit.Domain.Interfaces.Models;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
-using AgendaUnit.Domain.models;
+using AgendaUnit.Domain.Models;
+using AgendaUnit.Shared.Queries;
+using AgendaUnit.Shared.Queries.Interface;
 
 namespace AgendaUnit.Domain.Services
 {
@@ -24,9 +26,11 @@ namespace AgendaUnit.Domain.Services
 
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAll()
+        public virtual async Task<PageResult<TEntity>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
+        where TInputDto : QueryParams
+        where TOutputDto : class
         {
-            return await _repository.GetAll();
+            return await _repository.GetAll<TInputDto, TOutputDto>(inputDto);
         }
 
         public virtual async Task<TEntity> Create(TEntity entity)

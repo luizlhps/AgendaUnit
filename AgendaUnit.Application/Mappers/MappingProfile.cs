@@ -1,5 +1,6 @@
 using AgendaUnit.Application.DTO;
-using AgendaUnit.Domain.models;
+using AgendaUnit.Application.DTO.UserDto;
+using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Models;
 using AutoMapper;
 

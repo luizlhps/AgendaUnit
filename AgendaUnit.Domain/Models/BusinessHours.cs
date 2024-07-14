@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AgendaUnit.Domain.models;
+namespace AgendaUnit.Domain.Models;
 
 public class BusinessHours : BaseEntity
 {
@@ -18,3 +18,7 @@ public class BusinessHours : BaseEntity
 
     public virtual Company Company { get; set; }
 }
+
+
+
+
