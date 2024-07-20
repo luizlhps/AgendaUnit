@@ -104,7 +104,22 @@ namespace AgendaUnit.Infrastructure.Repositories
 
             #endregion
 
+            #region apply include properties
+            var dtoOutputProperties =
+                typeof(TOutputDto).GetProperties();
 
+            foreach (var property in dtoOutputProperties)
+            {
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                {
+                    var propertyName = property.Name;
+
+                    query = query.Include(propertyName);
+                }
+            }
+
+
+            #endregion
 
             #region apply pagination
 
@@ -147,6 +162,8 @@ namespace AgendaUnit.Infrastructure.Repositories
 
             }
             #endregion
+
+            Console.WriteLine(query);
 
             return pageResult;
         }
