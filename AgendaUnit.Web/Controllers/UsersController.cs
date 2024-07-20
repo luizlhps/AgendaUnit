@@ -3,6 +3,7 @@ using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Application.Services;
 using AgendaUnit.Shared.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgendaUnit.Web.Controllers;
@@ -18,6 +19,7 @@ public class UsersController : ControllerBase
         _userAppService = userAppService;
     }
 
+    [Authorize]
     [HttpGet("{id:int}", Name = "GetUserById")]
     async public Task<ActionResult<UserObtainedDto>> GetbyId(int id)
     {
@@ -27,42 +29,18 @@ public class UsersController : ControllerBase
     [HttpGet]
     async public Task<ActionResult<UserListedDto>> GetAll([FromQuery] UserListDto userListDto)
     {
-        try
-        {
-            return Ok(await _userAppService.GetAll<UserListDto, UserListedDto>(userListDto));
 
-        }
-        catch (EntityNotFoundException ex)
-        {
+        return Ok(await _userAppService.GetAll<UserListDto, UserListedDto>(userListDto));
 
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            // Log a exceção ou trate outros cenários de erro
-            return StatusCode(500, $"Internal Server Error {ex.Message}");
-        }
     }
 
 
     [HttpPost]
-    async public Task<ActionResult<UserCreatedDto>> CreateUser(UserCreateDto userCreateDto)
+    async public Task<ActionResult<UserCreatedDto>> Register(UserCreateDto userCreateDto)
     {
-        try
-        {
-            var userCreatedDto = await _userAppService.Create<UserCreateDto, UserCreatedDto>(userCreateDto);
-            return CreatedAtAction(nameof(GetbyId), new { id = userCreatedDto.Id }, userCreatedDto);
 
-        }
-        catch (EntityNotFoundException ex)
-        {
+        var userCreatedDto = await _userAppService.Register(userCreateDto);
+        return CreatedAtAction(nameof(GetbyId), new { id = userCreatedDto.Id }, userCreatedDto);
 
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            // Log a exceção ou trate outros cenários de erro
-            return StatusCode(500, $"Internal Server Error {ex.Message}");
-        }
     }
 }

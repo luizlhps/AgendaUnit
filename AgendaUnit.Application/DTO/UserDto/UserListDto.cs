@@ -9,5 +9,7 @@ namespace AgendaUnit.Application.DTO.UserDto;
 public class UserListDto : QueryParams
 {
     public string? Name { get; set; }
+    public string? Email { get; set; }
+
 
 }

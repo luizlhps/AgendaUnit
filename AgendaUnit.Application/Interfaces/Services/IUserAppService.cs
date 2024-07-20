@@ -1,4 +1,5 @@
 using AgendaUnit.Application.DTO;
+using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Services;
 using AgendaUnit.Domain.Models;
 
@@ -8,4 +9,6 @@ public interface IUserAppService : ICrudAppService<User>
 {
     Task<TOutputDto> GetByIdWithCompany<TOutputDto>(int id)
         where TOutputDto : class;
+
+    Task<UserCreatedDto> Register(UserCreateDto userCreateDto);
 }

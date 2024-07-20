@@ -1,10 +1,9 @@
-using System.Text.Json.Serialization;
+
 using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Application.DTO.UserDto;
 
-public class UserDto
-{
+public class UserDto  {
     public int Id { get; set; }
     public string Name { get; set; }
     public string Login { get; set; }

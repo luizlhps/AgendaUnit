@@ -5,6 +5,8 @@ using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
 using AutoMapper;
 
+
+namespace AgendaUnit.Application.Services;
 public class BusinessHoursAppService : Crud<BusinessHours, IBusinessHoursRepository, IBusinessHoursService>, IBusinessHoursAppService
 {
     public BusinessHoursAppService(IBusinessHoursRepository repository, IMapper mapper, IBusinessHoursService baseService) : base(repository, mapper, baseService)

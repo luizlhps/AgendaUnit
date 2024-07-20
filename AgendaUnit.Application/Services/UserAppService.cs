@@ -1,4 +1,5 @@
 using AgendaUnit.Application.DTO;
+using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
@@ -26,10 +27,23 @@ public class UserAppService : Crud<User, IUserRepository, IUserService>, IUserAp
 
         if (user == null)
         {
-            throw new EntityNotFoundException($"{id} is not found");
+            throw new NotFoundException($"{id} is not found");
         }
 
         return _mapper.Map<TOutputDto>(user);
+    }
+
+    async public Task<UserCreatedDto> Register(UserCreateDto userCreateDto)
+    {
+
+        userCreateDto.Password = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password);
+
+        var user = _mapper.Map<User>(userCreateDto);
+
+        await _baseService.Create(user);
+
+        return _mapper.Map<UserCreatedDto>(user);
+
     }
 
 }

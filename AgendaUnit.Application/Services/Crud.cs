@@ -81,7 +81,7 @@ namespace AgendaUnit.Domain.Services
 
                 if (entity == null)
                 {
-                    throw new EntityNotFoundException($"{id} is not found");
+                    throw new NotFoundException($"{id} is not found");
                 }
 
                 return _mapper.Map<TOutputDto>(entity);

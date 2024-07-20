@@ -21,8 +21,6 @@ public static class DependencyInjection
     {
         services
             .AddServices()
-            .AddAuthentication(configuration)
-            .AddAuthorization()
             .AddPersistence(configuration);
 
         return services;
@@ -39,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<ISchedulingAppService, SchedulingAppService>();
         services.AddScoped<IServiceAppService, ServiceAppService>();
         services.AddScoped<IUserAppService, UserAppService>();
+        services.AddScoped<IAuthenticationManagerService, AuthenticationManagerService>();
 
         // domain services
         services.AddScoped<IBusinessHoursService, BusinessHoursService>();
@@ -74,26 +73,5 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddAuthorization(this IServiceCollection services)
-    {
-        /*         services.AddScoped<IAuthorizationService, AuthorizationService>();
-                services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
-                services.AddSingleton<IPolicyEnforcer, PolicyEnforcer>(); */
 
-        return services;
-    }
-
-    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        /*         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.Section));
-
-                services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-
-                services
-                    .ConfigureOptions<JwtBearerTokenValidationConfiguration>()
-                    .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(); */
-
-        return services;
-    }
 }

@@ -25,6 +25,7 @@ public static class ApiExceptionsMiddlewaresExtensions
                     Exception exception = contextFeature.Error;
 
                     var response = new
+
                     {
                         StatusCode = context.Response.StatusCode,
                         Message = "Ocorreu um erro interno no servidor.",
