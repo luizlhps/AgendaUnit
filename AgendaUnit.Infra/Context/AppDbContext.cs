@@ -37,6 +37,10 @@ public class AppDbContext : DbContext
             .WithMany(c => c.Users)
             .HasForeignKey(u => u.CompanyId);
 
+        modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+        modelBuilder.Entity<User>().HasIndex(u => u.Login).IsUnique();
+        modelBuilder.Entity<Company>().HasIndex(u => u.OwnerId).IsUnique();
+
 
         base.OnModelCreating(modelBuilder);
 
