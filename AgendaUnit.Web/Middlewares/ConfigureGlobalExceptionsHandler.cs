@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -10,8 +11,9 @@ namespace AgendaUnit.Web.Middlewares;
 
 public static class ApiExceptionsMiddlewaresExtensions
 {
-    public static void ConfigureGlobalExceptionsHandler(this IApplicationBuilder app)
+    public static void ConfigureGlobalExceptionsHandler(this IApplicationBuilder app, IHostEnvironment environment)
     {
+
         app.UseExceptionHandler(appError =>
         {
             appError.Run(async context =>
@@ -30,6 +32,7 @@ public static class ApiExceptionsMiddlewaresExtensions
                         StatusCode = context.Response.StatusCode,
                         Message = "Ocorreu um erro interno no servidor.",
                         Name = exception.GetType().Name,
+                        StackTrace = environment.IsDevelopment() ? exception.StackTrace : null
                     };
 
                     if (exception is BaseException baseException)
@@ -41,6 +44,27 @@ public static class ApiExceptionsMiddlewaresExtensions
                             StatusCode = context.Response.StatusCode,
                             Message = baseException.Message,
                             Name = exception.GetType().Name,
+                            StackTrace = environment.IsDevelopment() ? exception.StackTrace : null
+                        };
+                    }
+                    else if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                    {
+                        response = new
+                        {
+                            StatusCode = context.Response.StatusCode,
+                            Message = "Acesso não autorizado.",
+                            Name = exception?.GetType().Name,
+                            StackTrace = environment.IsDevelopment() ? exception?.StackTrace : null
+                        };
+                    }
+                    else if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
+                    {
+                        response = new
+                        {
+                            StatusCode = context.Response.StatusCode,
+                            Message = "Acesso não permitido.",
+                            Name = exception.GetType().Name,
+                            StackTrace = environment.IsDevelopment() ? exception.StackTrace : null
                         };
                     }
 

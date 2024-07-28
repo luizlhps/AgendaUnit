@@ -4,9 +4,14 @@ using System.Security.Claims;
 using System.Text;
 using AgendaUnit.Application.DTO.AuthenticationManagerDto;
 using AgendaUnit.Application.DTO.UserDto;
+using AgendaUnit.Application.Interfaces;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Domain.Interfaces.Services;
+using AgendaUnit.Domain.Models;
+using AgendaUnit.Shared.Dtos;
 using AgendaUnit.Shared.Exceptions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,9 +21,11 @@ public class AuthenticationManagerService : IAuthenticationManagerService
 {
     private readonly IUserService _userService;
     private readonly IConfiguration _configuration;
+    private readonly IUserMemoryCacheService _userMemoryCacheService;
 
-    public AuthenticationManagerService(IUserService userService, IConfiguration configuration)
+    public AuthenticationManagerService(IUserService userService, IConfiguration configuration, IUserMemoryCacheService userMemoryCacheService)
     {
+        _userMemoryCacheService = userMemoryCacheService;
         _userService = userService;
         _configuration = configuration;
     }
@@ -28,14 +35,14 @@ public class AuthenticationManagerService : IAuthenticationManagerService
 
         var userListDto = new UserListDto
         {
-            Email = loginRequestDto.Email,
+            Login = loginRequestDto.Login,
         };
 
         var pageResultUser = await _userService.GetAll<UserListDto, UserListedDto>(userListDto);
 
         if (pageResultUser.Items.Count == 0)
         {
-            throw new NotFoundException("Email ou senha inválidos.");
+            throw new NotFoundException("Login ou senha inválidos.");
         }
 
         var user = pageResultUser.Items.First();
@@ -44,26 +51,35 @@ public class AuthenticationManagerService : IAuthenticationManagerService
 
         if (!loginValid)
         {
-            throw new NotFoundException("Email ou senha inválidos.");
+            throw new NotFoundException("Login ou senha inválidos.");
         }
 
-        var token = GenerateJwtToken(loginRequestDto.Email, "1");
+        var token = GenerateJwtToken(loginRequestDto.Login, user.Role.Name);
 
         var loginResponseDto = new LoginResponseDto
         {
             Token = token,
-            /*   ExpiresAt = token.ValidTo, */
         };
+
+        /*         var userCacheDto = new UserCacheDto
+                {
+                    RoleId = user.RoleId,
+                    Token = token,
+                    userId = user.Id,
+                    email = user.Email
+                }; */
+        /* 
+                _userMemoryCacheService.SetData(userCacheDto); */
 
         return loginResponseDto;
     }
 
-    private string GenerateJwtToken(string email, string role)
+    private string GenerateJwtToken(string login, string role)
     {
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim(ClaimTypes.Role, role),
+            new Claim("login", login),
+            new Claim("role", role),
         };
 
 

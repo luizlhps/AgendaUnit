@@ -1,3 +1,4 @@
+using AgendaUnit.Application.Interfaces;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Application.Mappers;
 using AgendaUnit.Application.Services;
@@ -6,6 +7,7 @@ using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
 using AgendaUnit.Infra.Context;
+using AgendaUnit.Infra.CrossCutting.MemoryCacheServices;
 using AgendaUnit.Infra.Repository;
 using AgendaUnit.Infrastructure.Repositories;
 using AutoMapper;
@@ -58,6 +60,9 @@ public static class DependencyInjection
 
         // AutoMapper 
         services.AddAutoMapper(typeof(MappingProfile));
+
+        //MemoryCacheService
+        services.AddSingleton<IUserMemoryCacheService, UserMemoryCacheService>();
 
 
         return services;
