@@ -31,23 +31,6 @@ public class UserController : ControllerBase
     [HttpGet("{id:int}", Name = "GetUserById")]
     async public Task<ActionResult<UserObtainedDto>> GetbyId(int id)
     {
-        var token = _httpContextAccessor.HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(token);
-
-        var claims = jwtToken.Claims;
-
-        var userEmailClaim = claims.FirstOrDefault(c => c.Type.Equals("email"))?.Value;
-
-        var userCache = _userMemoryCache.GetData(userEmailClaim);
-
-        Console.WriteLine(userCache);
-
-        if (userCache == null)
-        {
-
-        }
-
         return Ok(await _userAppService.GetByIdWithCompany<UserObtainedDto>(id));
     }
     [HttpGet]

@@ -8,7 +8,7 @@ namespace AgendaUnit.Domain.Models
     {
         public string Name { get; set; }
 
-        public string Login { get; set; }
+        public string Username { get; set; }
 
         public string Email { get; set; }
 

@@ -35,14 +35,14 @@ public class AuthenticationManagerService : IAuthenticationManagerService
 
         var userListDto = new UserListDto
         {
-            Login = loginRequestDto.Login,
+            Username = loginRequestDto.Username,
         };
 
         var pageResultUser = await _userService.GetAll<UserListDto, UserListedDto>(userListDto);
 
         if (pageResultUser.Items.Count == 0)
         {
-            throw new NotFoundException("Login ou senha inválidos.");
+            throw new UnauthorizedException("Login ou senha inválidos.");
         }
 
         var user = pageResultUser.Items.First();
@@ -51,10 +51,10 @@ public class AuthenticationManagerService : IAuthenticationManagerService
 
         if (!loginValid)
         {
-            throw new NotFoundException("Login ou senha inválidos.");
+            throw new UnauthorizedException("Login ou senha inválidos.");
         }
 
-        var token = GenerateJwtToken(loginRequestDto.Login, user.Role.Name);
+        var token = GenerateJwtToken(loginRequestDto.Username, user.Role.Name);
 
         var loginResponseDto = new LoginResponseDto
         {
