@@ -26,8 +26,9 @@ public static class ApiExceptionsMiddlewaresExtensions
                 {
                     Exception exception = contextFeature.Error;
 
-                    var response = new
+                    object response;
 
+                    response = new
                     {
                         StatusCode = context.Response.StatusCode,
                         Message = "Ocorreu um erro interno no servidor.",
@@ -46,6 +47,25 @@ public static class ApiExceptionsMiddlewaresExtensions
                             Name = exception.GetType().Name,
                             StackTrace = environment.IsDevelopment() ? exception.StackTrace : null
                         };
+
+                        if (exception is BadRequestException badRequestException)
+                        {
+                            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                            response = new
+                            {
+                                StatusCode = context.Response.StatusCode,
+                                Message = badRequestException.Message,
+                                Name = exception.GetType().Name,
+                                ErrorsFields = badRequestException.ModelState
+                                    .Where(fields => fields.Value.Errors.Count > 0)
+                                    .ToDictionary(
+                                        kvp => kvp.Key,
+                                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                                    ),
+                                StackTrace = environment.IsDevelopment() ? exception.StackTrace : null,
+                            };
+                        }
                     }
                     else if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
                     {
@@ -67,7 +87,6 @@ public static class ApiExceptionsMiddlewaresExtensions
                             StackTrace = environment.IsDevelopment() ? exception.StackTrace : null
                         };
                     }
-
 
                     var options = new JsonSerializerOptions
                     {

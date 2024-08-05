@@ -10,7 +10,7 @@ namespace AgendaUnit.Application.Services;
 
 public class CustomerAppService : Crud<Customer, ICustomerRepository, ICustomerService>, ICustomerAppService
 {
-    public CustomerAppService(ICustomerRepository repository, IMapper mapper, ICustomerService baseService) : base(repository, mapper, baseService)
+    public CustomerAppService(ICustomerRepository repository, IMapper mapper, ICustomerService baseService, IServiceProvider serviceProvider) : base(repository, mapper, baseService, serviceProvider)
     {
     }
 

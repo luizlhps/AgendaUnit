@@ -1,12 +1,18 @@
 
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgendaUnit.Application.DTO.AuthenticationManagerDto;
+using AgendaUnit.Domain.Models;
 using AgendaUnit.Infra;
 using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Web.Middlewares;
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -68,7 +74,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
 });
+
+//Validators
+/* builder.Services.AddScoped<IValidator<User>, UserValidator>(); */
+/* builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>(); */
+builder.Services.AddValidatorsFromAssembly(Assembly.Load("AgendaUnit.Application"));
 
 /* Controllers */
 builder.Services.AddControllers();
@@ -81,6 +93,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+//app.UseMiddleware<ValidationMiddleware>();
 app.ConfigureGlobalExceptionsHandler(app.Environment);
 
 if (app.Environment.IsDevelopment())

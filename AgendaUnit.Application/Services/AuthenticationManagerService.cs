@@ -10,6 +10,7 @@ using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Shared.Dtos;
 using AgendaUnit.Shared.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;

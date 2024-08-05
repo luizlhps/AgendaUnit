@@ -15,7 +15,7 @@ public class UserAppService : Crud<User, IUserRepository, IUserService>, IUserAp
     private readonly IUserService _baseService;
     private readonly IMapper _mapper;
 
-    public UserAppService(IUserRepository repository, IMapper mapper, IUserService baseService) : base(repository, mapper, baseService)
+    public UserAppService(IUserRepository repository, IMapper mapper, IUserService baseService, IServiceProvider serviceProvider) : base(repository, mapper, baseService, serviceProvider)
     {
         _baseService = baseService;
         _mapper = mapper;
@@ -35,14 +35,9 @@ public class UserAppService : Crud<User, IUserRepository, IUserService>, IUserAp
 
     async public Task<UserCreatedDto> Register(UserCreateDto userCreateDto)
     {
-
         userCreateDto.Password = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password);
 
-        var user = _mapper.Map<User>(userCreateDto);
-
-        await _baseService.Create(user);
-
-        return _mapper.Map<UserCreatedDto>(user);
+        return await Create<UserCreateDto, UserCreatedDto>(userCreateDto);
 
     }
 

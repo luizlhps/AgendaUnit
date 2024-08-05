@@ -1,3 +1,4 @@
+using AgendaUnit.Application.DTO.AuthenticationManagerDto;
 using AgendaUnit.Application.Services;
 using AgendaUnit.Domain.Interfaces.Models;
 using AgendaUnit.Domain.Interfaces.Repositories;
@@ -6,6 +7,9 @@ using AgendaUnit.Domain.Models;
 using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Shared.Queries;
 using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AgendaUnit.Domain.Services
 {
@@ -14,21 +18,26 @@ namespace AgendaUnit.Domain.Services
         where TBaseService : IBaseService<TEntity, TRepository>
         where TRepository : IBaseRepository<TEntity>
     {
+
         private readonly TBaseService _baseService;
         private readonly TRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public Crud(TRepository repository, IMapper mapper, TBaseService baseService)
+        public Crud(TRepository repository, IMapper mapper, TBaseService baseService, IServiceProvider serviceProvider)
         {
             _repository = repository;
             _mapper = mapper;
             _baseService = baseService;
+            _serviceProvider = serviceProvider;
         }
 
         async public Task<TOutputDto> Create<TInputDto, TOutputDto>(TInputDto inputDto)
              where TInputDto : class
              where TOutputDto : class
         {
+            Validate(inputDto);
+
             var entity = _mapper.Map<TEntity>(inputDto);
 
             var createdEntity = await _baseService.Create(entity);
@@ -97,6 +106,7 @@ namespace AgendaUnit.Domain.Services
              where TInputDto : class
              where TOutputDto : class
         {
+            Validate(inputDto);
 
             var entity = await _baseService.GetById(_mapper.Map<TEntity>(inputDto).Id);
             var entityMapper = _mapper.Map(inputDto, entity);
@@ -105,8 +115,28 @@ namespace AgendaUnit.Domain.Services
             return _mapper.Map<TOutputDto>(entityUpdated);
         }
 
+        private void Validate<TInputDto>(TInputDto inputDto)
+            where TInputDto : class
+        {
+            var validator = _serviceProvider.GetService<IValidator<TInputDto>>();
+
+            if (validator != null)
+            {
+                var validationResult = validator.Validate(inputDto);
+
+                var ModelState = new ModelStateDictionary();
+
+                if (!validationResult.IsValid)
+                {
+                    foreach (var error in validationResult.Errors)
+                    {
+                        ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    }
+
+                    throw new BadRequestException(ModelState, "Erro na validação");
+                }
+            }
+        }
     }
-
-
 
 }
