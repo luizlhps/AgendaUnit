@@ -24,6 +24,17 @@ namespace AgendaUnit.Domain.Models
         public string? RecoveryToken { get; set; }
 
 
+        [Column(name: "recovery_expiry_time")]
+        public DateTime? RecoveryExpiryTime { get; set; }
+
+
+        [Column(name: "refresh_token")]
+        public string? RefreshToken { get; set; }
+
+
+        [Column(name: "refresh_token_expiry_time")]
+        public DateTime? RefreshTokenExpiryTime { get; set; }
+
         public string Phone { get; set; }
 
 

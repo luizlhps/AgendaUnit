@@ -1,4 +1,5 @@
 using AgendaUnit.Application.DTO.AuthenticationManagerDto;
+using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Shared.Exceptions;
@@ -40,6 +41,12 @@ public class AuthenticationManagerController : ControllerBase
 
 
         return Ok(await _authenticationManagerService.Login(loginRequestDto));
+    }
+
+    [HttpPost("RefreshToken")]
+    public async Task<IActionResult> RefreshToken([FromBody] UserToken userToken)
+    {
+        return Ok(await _authenticationManagerService.RefreshToken(userToken));
     }
 
 

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class timeStamp : Migration
+    public partial class refreshToken : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -122,11 +122,14 @@ namespace AgendaUnit.Infra.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    login = table.Column<string>(type: "text", nullable: false),
+                    username = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
                     role_id = table.Column<int>(type: "integer", nullable: false),
                     recovery_token = table.Column<string>(type: "text", nullable: true),
+                    recovery_expiry_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    refresh_token = table.Column<string>(type: "text", nullable: true),
+                    refresh_token_expiry_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     phone = table.Column<string>(type: "text", nullable: false),
                     company_id = table.Column<int>(type: "integer", nullable: true),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -254,9 +257,21 @@ namespace AgendaUnit.Infra.Migrations
                 column: "company_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_email",
+                table: "user",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_role_id",
                 table: "user",
                 column: "role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_username",
+                table: "user",
+                column: "username",
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_company_user_owner_id",

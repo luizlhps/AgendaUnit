@@ -14,8 +14,8 @@ public class UserObtainedDto
     public string? RecoveryToken { get; set; }
     public string Phone { get; set; }
     public int? CompanyId { get; set; }
-
-
+    public string RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
     [AutoMap(typeof(Company), ReverseMap = true)]
     public class UserObtainedCompanyDto
     {

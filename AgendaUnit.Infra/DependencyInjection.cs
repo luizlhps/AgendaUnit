@@ -10,6 +10,8 @@ using AgendaUnit.Infra.Context;
 using AgendaUnit.Infra.CrossCutting.MemoryCacheServices;
 using AgendaUnit.Infra.Repository;
 using AgendaUnit.Infrastructure.Repositories;
+using AgendaUnit.Shared;
+using AgendaUnit.Shared.CrossCutting;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -64,6 +66,8 @@ public static class DependencyInjection
         //MemoryCacheService
         services.AddSingleton<IUserMemoryCacheService, UserMemoryCacheService>();
 
+        //Common
+        services.AddSingleton<ICommon, Common>();
 
         return services;
     }

@@ -1,8 +1,10 @@
 
 using AgendaUnit.Domain.Models;
+using AutoMapper;
 
 namespace AgendaUnit.Application.DTO.UserDto;
 
+[AutoMap(typeof(User), ReverseMap = true)]
 public class UserDto
 {
     public int Id { get; set; }
@@ -13,8 +15,12 @@ public class UserDto
     public int RoleId { get; set; }
     public Role Role { get; set; }
     public string? RecoveryToken { get; set; }
+    public DateTime RecoveryExpiryTime { get; set; }
+
     public string Phone { get; set; }
     public int? CompanyId { get; set; }
     public Company Company { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
 }
 

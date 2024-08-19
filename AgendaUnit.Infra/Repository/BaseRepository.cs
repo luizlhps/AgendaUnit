@@ -30,11 +30,15 @@ namespace AgendaUnit.Infrastructure.Repositories
 
         public async Task<TEntity> Update(TEntity entity)
         {
-            var existingEntity = await _appDbContext.Set<TEntity>().FindAsync(entity); //fix it
+            var key = _appDbContext.Entry(entity).Property("Id").CurrentValue;
+
+            var existingEntity = await _appDbContext.Set<TEntity>().FindAsync(key);
+
             if (existingEntity == null)
                 throw new InvalidOperationException("Entity not found");
 
             _appDbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+
             await _appDbContext.SaveChangesAsync();
             return existingEntity;
         }

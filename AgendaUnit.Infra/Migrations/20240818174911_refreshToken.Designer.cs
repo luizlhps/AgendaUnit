@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240803001747_alter_login_field_user")]
-    partial class alter_login_field_user
+    [Migration("20240818174911_refreshToken")]
+    partial class refreshToken
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -339,9 +339,21 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone");
 
+                    b.Property<DateTime>("RecoveryExpiryTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recovery_expiry_time");
+
                     b.Property<string>("RecoveryToken")
                         .HasColumnType("text")
                         .HasColumnName("recovery_token");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text")
+                        .HasColumnName("refresh_token");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("refresh_token_expiry_time");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("integer")

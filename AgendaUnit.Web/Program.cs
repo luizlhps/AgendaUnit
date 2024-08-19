@@ -78,8 +78,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 //Validators
-/* builder.Services.AddScoped<IValidator<User>, UserValidator>(); */
-/* builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>(); */
 builder.Services.AddValidatorsFromAssembly(Assembly.Load("AgendaUnit.Application"));
 
 /* Controllers */
@@ -93,8 +91,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-//app.UseMiddleware<ValidationMiddleware>();
 app.ConfigureGlobalExceptionsHandler(app.Environment);
+app.UseMiddleware<TokenMiddleware>();
+
 
 if (app.Environment.IsDevelopment())
 {

@@ -102,16 +102,39 @@ namespace AgendaUnit.Domain.Services
             }
         }
 
+
         async public Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto)
              where TInputDto : class
              where TOutputDto : class
         {
             Validate(inputDto);
 
-            var entity = await _baseService.GetById(_mapper.Map<TEntity>(inputDto).Id);
-            var entityMapper = _mapper.Map(inputDto, entity);
+            var idProperty = typeof(TInputDto).GetProperties()
+            .FirstOrDefault(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase));
 
-            var entityUpdated = await _baseService.Update(entityMapper);
+            if (idProperty == null)
+            {
+                var modelState = new ModelStateDictionary();
+                modelState.AddModelError("Id", "Id é obrigatório");
+
+                throw new BadRequestException(modelState, "Id é obrigatório");
+            }
+            var idValue = idProperty.GetValue(inputDto);
+
+            if (!(idValue is int id))
+            {
+                var modelState = new ModelStateDictionary();
+                modelState.AddModelError("Id", "Id não do tipo int");
+
+                throw new BadRequestException(modelState, "Id não do tipo int");
+            }
+
+            var existingEntity = await _baseService.GetById(id);
+
+            _mapper.Map(inputDto, existingEntity);
+
+            var entityUpdated = await _baseService.Update(existingEntity);
+
             return _mapper.Map<TOutputDto>(entityUpdated);
         }
 

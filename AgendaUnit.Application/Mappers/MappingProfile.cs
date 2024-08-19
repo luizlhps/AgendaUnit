@@ -10,7 +10,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<User, UserDto>().ReverseMap();
+        /*  CreateMap<User, UserDto>().ReverseMap(); */
         CreateMap<BusinessHours, BusinessHoursDto>().ReverseMap();
         CreateMap<Service, ServiceDto>().ReverseMap();
         CreateMap<Scheduling, SchedulingDto>().ReverseMap();

@@ -16,13 +16,11 @@ public class UserController : ControllerBase
 {
     private readonly IUserAppService _userAppService;
     private readonly IUserMemoryCacheService _userMemoryCache;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserController(IUserAppService userAppService, IUserMemoryCacheService userMemoryCache, IHttpContextAccessor httpContextAccessor)
+    public UserController(IUserAppService userAppService, IUserMemoryCacheService userMemoryCache)
     {
         _userAppService = userAppService;
         _userMemoryCache = userMemoryCache;
-        _httpContextAccessor = httpContextAccessor;
 
     }
 

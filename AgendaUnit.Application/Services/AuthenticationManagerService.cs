@@ -1,18 +1,15 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AgendaUnit.Application.DTO.AuthenticationManagerDto;
 using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces;
 using AgendaUnit.Application.Interfaces.Services;
-using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
-using AgendaUnit.Shared.Dtos;
+using AgendaUnit.Shared.CrossCutting;
 using AgendaUnit.Shared.Exceptions;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,15 +17,17 @@ using Microsoft.IdentityModel.Tokens;
 namespace AgendaUnit.Application.Services;
 public class AuthenticationManagerService : IAuthenticationManagerService
 {
-    private readonly IUserService _userService;
+    private readonly IUserAppService _userAppService;
     private readonly IConfiguration _configuration;
+    private readonly ICommon _common;
     private readonly IUserMemoryCacheService _userMemoryCacheService;
 
-    public AuthenticationManagerService(IUserService userService, IConfiguration configuration, IUserMemoryCacheService userMemoryCacheService)
+    public AuthenticationManagerService(ICommon common, IUserAppService userAppService, IConfiguration configuration, IUserMemoryCacheService userMemoryCacheService)
     {
         _userMemoryCacheService = userMemoryCacheService;
-        _userService = userService;
         _configuration = configuration;
+        _userAppService = userAppService;
+        _common = common;
     }
 
     public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
@@ -39,7 +38,7 @@ public class AuthenticationManagerService : IAuthenticationManagerService
             Username = loginRequestDto.Username,
         };
 
-        var pageResultUser = await _userService.GetAll<UserListDto, UserListedDto>(userListDto);
+        var pageResultUser = await _userAppService.GetAll<UserListDto, UserListedDto>(userListDto);
 
         if (pageResultUser.Items.Count == 0)
         {
@@ -56,30 +55,72 @@ public class AuthenticationManagerService : IAuthenticationManagerService
         }
 
         var token = GenerateJwtToken(loginRequestDto.Username, user.Role.Name);
+        var refreshToken = GenerateRefreshToken();
+
+        #region update refresh token for user
+
+        var userUpdateDto = new UserRefreshTokenUpdateDto
+        {
+            Id = user.Id,
+            RefreshToken = refreshToken,
+            RefreshTokenExpiryTime = DateTime.Now.AddDays(7),
+        };
+
+        var userUpdatedDto = await _userAppService.Update<UserRefreshTokenUpdateDto, UserUpdatedDto>(userUpdateDto);
+
+        #endregion
 
         var loginResponseDto = new LoginResponseDto
         {
             Token = token,
+            Expires = DateTime.Now.AddHours(1),
+            RefreshToken = refreshToken,
         };
-
-        /*         var userCacheDto = new UserCacheDto
-                {
-                    RoleId = user.RoleId,
-                    Token = token,
-                    userId = user.Id,
-                    email = user.Email
-                }; */
-        /* 
-                _userMemoryCacheService.SetData(userCacheDto); */
 
         return loginResponseDto;
     }
 
-    private string GenerateJwtToken(string login, string role)
+    public async Task<LoginResponseDto> RefreshToken(UserToken userToken)
+    {
+
+        var userObtained = await _userAppService.GetById<UserObtainedDto>(_common.UserId);
+
+        if (userObtained == null)
+        {
+            throw new UnauthorizedException("Usuário não encontrado.");
+        }
+
+        if (userToken.RefreshToken != userObtained.RefreshToken | userObtained.RefreshTokenExpiryTime < DateTime.Now)
+        {
+            throw new UnauthorizedException("RefreshToken inválido.");
+        }
+
+        var refreshToken = GenerateRefreshToken();
+        var token = GenerateJwtToken(userObtained.Username, _common.UserRole);
+
+        var userUpdateDto = new UserRefreshTokenUpdateDto
+        {
+            Id = userObtained.Id,
+            RefreshToken = refreshToken,
+            RefreshTokenExpiryTime = DateTime.Now.AddDays(7),
+        };
+
+        var userUpdatedDto = await _userAppService.Update<UserRefreshTokenUpdateDto, UserUpdatedDto>(userUpdateDto);
+
+        return new LoginResponseDto
+        {
+            Token = token,
+            Expires = DateTime.Now.AddHours(1),
+            RefreshToken = refreshToken,
+        };
+
+    }
+
+    private string GenerateJwtToken(string username, string role)
     {
         var claims = new[]
         {
-            new Claim("login", login),
+            new Claim("username", username),
             new Claim("role", role),
         };
 
@@ -91,12 +132,20 @@ public class AuthenticationManagerService : IAuthenticationManagerService
             issuer: _configuration["jwt:Issuer"],
             audience: _configuration["jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
+            expires: DateTime.Now.AddSeconds(10),
             signingCredentials: creds);
-
-
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    private string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+    }
 }
+
