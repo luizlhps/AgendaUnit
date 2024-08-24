@@ -336,7 +336,7 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone");
 
-                    b.Property<DateTime>("RecoveryExpiryTime")
+                    b.Property<DateTime?>("RecoveryExpiryTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("recovery_expiry_time");
 
@@ -348,7 +348,7 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("text")
                         .HasColumnName("refresh_token");
 
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("refresh_token_expiry_time");
 

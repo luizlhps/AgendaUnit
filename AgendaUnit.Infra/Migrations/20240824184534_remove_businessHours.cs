@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class refreshToken : Migration
+    public partial class remove_businessHours : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -127,9 +127,9 @@ namespace AgendaUnit.Infra.Migrations
                     password = table.Column<string>(type: "text", nullable: false),
                     role_id = table.Column<int>(type: "integer", nullable: false),
                     recovery_token = table.Column<string>(type: "text", nullable: true),
-                    recovery_expiry_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    recovery_expiry_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     refresh_token = table.Column<string>(type: "text", nullable: true),
-                    refresh_token_expiry_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    refresh_token_expiry_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     phone = table.Column<string>(type: "text", nullable: false),
                     company_id = table.Column<int>(type: "integer", nullable: true),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),

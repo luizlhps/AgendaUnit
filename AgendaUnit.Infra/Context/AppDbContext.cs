@@ -39,7 +39,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
-        modelBuilder.Entity<Company>().HasIndex(u => u.OwnerId).IsUnique();
 
 
         base.OnModelCreating(modelBuilder);
