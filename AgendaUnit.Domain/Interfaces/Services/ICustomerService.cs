@@ -3,6 +3,6 @@ using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Domain.Interfaces.Services;
 
-public interface ICustomerService : IBaseService<Customer, ICustomerRepository>
+public interface ICustomerService : IBaseService<Customer>
 {
 }

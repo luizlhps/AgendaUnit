@@ -1,6 +1,7 @@
 using AgendaUnit.Application.DTO;
 using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces.Services;
+using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
@@ -10,15 +11,10 @@ using AutoMapper;
 
 namespace AgendaUnit.Application.Services;
 
-public class UserAppService : Crud<User, IUserRepository, IUserService>, IUserAppService
+public class UserAppService : Crud<User, IUserService>, IUserAppService
 {
-    private readonly IUserService _baseService;
-    private readonly IMapper _mapper;
-
-    public UserAppService(IUserRepository repository, IMapper mapper, IUserService baseService, IServiceProvider serviceProvider) : base(repository, mapper, baseService, serviceProvider)
+    public UserAppService(IUnitOfWork unitOfWork, IMapper mapper, IUserService baseService, IServiceProvider serviceProvider) : base(unitOfWork, mapper, baseService, serviceProvider)
     {
-        _baseService = baseService;
-        _mapper = mapper;
     }
 
     async public Task<TOutputDto> GetByIdWithCompany<TOutputDto>(int id) where TOutputDto : class
@@ -36,6 +32,7 @@ public class UserAppService : Crud<User, IUserRepository, IUserService>, IUserAp
     async public Task<UserCreatedDto> Register(UserCreateDto userCreateDto)
     {
         userCreateDto.Password = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password);
+        userCreateDto.RoleId = (int)RoleEnum.Admin;
 
         return await Create<UserCreateDto, UserCreatedDto>(userCreateDto);
 

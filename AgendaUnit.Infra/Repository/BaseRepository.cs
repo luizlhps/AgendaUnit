@@ -1,18 +1,26 @@
 
+using System.Reflection;
 using AgendaUnit.Domain.Interfaces.Repositories;
+using AgendaUnit.Domain.Models;
 using AgendaUnit.Infra.Context;
 using AgendaUnit.Shared.Queries;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AgendaUnit.Infrastructure.Repositories
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
-        private readonly AppDbContext _appDbContext;
+        protected readonly AppDbContext _appDbContext;
+        protected readonly IMapper _mapper;
 
-        public BaseRepository(AppDbContext appDbContext)
+        public BaseRepository(AppDbContext appDbContext, IMapper mapper)
         {
             _appDbContext = appDbContext;
+            _mapper = mapper;
         }
 
         public async Task<TEntity> GetById(int id)
@@ -24,7 +32,7 @@ namespace AgendaUnit.Infrastructure.Repositories
         public async Task<TEntity> Create(TEntity entity)
         {
             _appDbContext.Set<TEntity>().Add(entity);
-            await _appDbContext.SaveChangesAsync();
+            // await _appDbContext.SaveChangesAsync();
             return entity;
         }
 
@@ -39,7 +47,7 @@ namespace AgendaUnit.Infrastructure.Repositories
 
             _appDbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
 
-            await _appDbContext.SaveChangesAsync();
+            // await _appDbContext.SaveChangesAsync();
             return existingEntity;
         }
 
@@ -50,16 +58,16 @@ namespace AgendaUnit.Infrastructure.Repositories
                 return false;
 
             _appDbContext.Set<TEntity>().Remove(entity);
-            await _appDbContext.SaveChangesAsync();
+            // await _appDbContext.SaveChangesAsync();
             return true;
         }
 
-        async public Task<PageResult<TEntity>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
+        async public Task<PageResult<TOutputDto>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
         where TInputDto : QueryParams
         where TOutputDto : class
         {
 
-            var pageResult = new PageResult<TEntity>
+            var pageResult = new PageResult<TOutputDto>
             {
                 Items = [],
                 PageNumber = 1,
@@ -103,6 +111,16 @@ namespace AgendaUnit.Infrastructure.Repositories
                         query = query.Where(item => EF.Property<bool>(item, property.Name).Equals(value));
                         continue;
                     }
+                    if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum)
+                    {
+                        query = query.Where(item => EF.Property<object>(item, property.Name).Equals(value));
+                        continue;
+                    }
+                    if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                    {
+                        ApplyNestedPropertiesFilter(query, value, property.Name);
+                        continue;
+                    }
                 }
             }
 
@@ -114,13 +132,21 @@ namespace AgendaUnit.Infrastructure.Repositories
 
             foreach (var property in dtoOutputProperties)
             {
+
                 if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
                 {
                     var propertyName = property.Name;
 
                     query = query.Include(propertyName);
                 }
+
             }
+
+
+            #region entities Isdeleted
+            query = query.Where(item => EF.Property<bool>(item, "IsDeleted") == false);
+
+            #endregion
 
 
             #endregion
@@ -130,9 +156,9 @@ namespace AgendaUnit.Infrastructure.Repositories
             // return all items if allrows is true
             if (inputDto.PaginationProperties?.AllRows ?? false)
             {
-                var items = await query.ToListAsync();
+                var items = await query.ProjectTo<TOutputDto>(_mapper.ConfigurationProvider).ToListAsync();
 
-                pageResult = new PageResult<TEntity>
+                pageResult = new PageResult<TOutputDto>
                 {
                     Items = items,
                     PageNumber = 1,
@@ -152,11 +178,9 @@ namespace AgendaUnit.Infrastructure.Repositories
                     pageNumber = totalPages - 1;
                 }
 
-                query = query.Skip(pageNumber).Take(pageSize);
+                var items = await query.ProjectTo<TOutputDto>(_mapper.ConfigurationProvider).Skip(pageNumber).Take(pageSize).ToListAsync();
 
-                var items = await query.ToListAsync();
-
-                pageResult = new PageResult<TEntity>
+                pageResult = new PageResult<TOutputDto>
                 {
                     Items = items,
                     PageNumber = pageNumber + 1,
@@ -171,8 +195,44 @@ namespace AgendaUnit.Infrastructure.Repositories
 
             return pageResult;
         }
+        private void ApplyNestedPropertiesFilter<TEntity>(IQueryable<TEntity> query, object nestedObject, string parentPropertyName)
+        {
+            var nestedProperties = nestedObject.GetType().GetProperties();
 
+            foreach (var nestedProperty in nestedProperties)
+            {
+                var nestedValue = nestedProperty.GetValue(nestedObject, null);
+
+                if (nestedValue != null)
+                {
+                    if (nestedProperty.PropertyType == typeof(string))
+                    {
+                        query = query.Where(item => EF.Property<string>(item, nestedProperty.Name).Contains(nestedValue.ToString()));
+                    }
+                    if (nestedProperty.PropertyType == typeof(bool))
+                    {
+                        query = query.Where(item => EF.Property<string>(item, nestedProperty.Name).Contains(nestedValue.ToString()));
+                    }
+                    if (nestedProperty.PropertyType.IsValueType)
+                    {
+                        query = query.Where(item => EF.Property<string>(item, nestedProperty.Name).Contains(nestedValue.ToString()));
+                    }
+                    if (nestedProperty.PropertyType.IsClass && nestedProperty.PropertyType != typeof(string))
+                    {
+                        ApplyNestedPropertiesFilter(query, nestedValue, nestedProperty.Name);
+                    }
+                }
+            }
+        }
 
 
     }
+
+
+
+
+
 }
+
+
+

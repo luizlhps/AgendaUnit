@@ -3,7 +3,7 @@ using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Domain.Interfaces.Services;
 
-public interface IUserService : IBaseService<User, IUserRepository>
+public interface IUserService : IBaseService<User>
 {
     Task<User> GetByIdWithCompany(int id);
 }

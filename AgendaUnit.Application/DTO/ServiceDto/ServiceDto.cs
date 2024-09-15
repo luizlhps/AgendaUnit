@@ -1,7 +1,10 @@
 using AgendaUnit.Domain.Models;
+using AutoMapper;
 
-namespace AgendaUnit.Application.DTO;
+namespace AgendaUnit.Application.DTO.ServiceDto;
 
+
+[AutoMap(typeof(Service), ReverseMap = true)]
 public class ServiceDto
 {
     public int Id { get; set; }

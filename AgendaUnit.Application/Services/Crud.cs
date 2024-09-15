@@ -1,5 +1,6 @@
 using AgendaUnit.Application.DTO.AuthenticationManagerDto;
 using AgendaUnit.Application.Services;
+using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Models;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
@@ -13,26 +14,25 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AgendaUnit.Domain.Services
 {
-    public class Crud<TEntity, TRepository, TBaseService> : ICrudAppService<TEntity>
+    public class Crud<TEntity, TBaseService> : ICrudAppService<TEntity>
         where TEntity : class, IBaseEntity, new()
-        where TBaseService : IBaseService<TEntity, TRepository>
-        where TRepository : IBaseRepository<TEntity>
+        where TBaseService : IBaseService<TEntity>
     {
 
-        private readonly TBaseService _baseService;
-        private readonly TRepository _repository;
-        private readonly IMapper _mapper;
-        private readonly IServiceProvider _serviceProvider;
+        protected readonly TBaseService _baseService;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IMapper _mapper;
+        protected readonly IServiceProvider _serviceProvider;
 
-        public Crud(TRepository repository, IMapper mapper, TBaseService baseService, IServiceProvider serviceProvider)
+        public Crud(IUnitOfWork unitOfWork, IMapper mapper, TBaseService baseService, IServiceProvider serviceProvider)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _baseService = baseService;
             _serviceProvider = serviceProvider;
         }
 
-        async public Task<TOutputDto> Create<TInputDto, TOutputDto>(TInputDto inputDto)
+        async public Task<TOutputDto> Create<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
              where TInputDto : class
              where TOutputDto : class
         {
@@ -42,16 +42,28 @@ namespace AgendaUnit.Domain.Services
 
             var createdEntity = await _baseService.Create(entity);
 
+            //save changes
+            if (isTransaction == null)
+            {
+                _unitOfWork.Commit();
+            }
+
             return _mapper.Map<TOutputDto>(createdEntity);
         }
 
-        async public Task<TOutputDto> Delete<TInputDto, TOutputDto>(TInputDto inputDto)
+        async public Task<TOutputDto> Delete<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
             where TInputDto : class
             where TOutputDto : class
         {
             var entity = _mapper.Map<TEntity>(inputDto);
 
             var deletedEntity = await _baseService.Delete(entity.Id);
+
+            //save changes
+            if (isTransaction == null)
+            {
+                _unitOfWork.Commit();
+            }
 
             return _mapper.Map<TOutputDto>(deletedEntity);
         }
@@ -103,7 +115,7 @@ namespace AgendaUnit.Domain.Services
         }
 
 
-        async public Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto)
+        async public Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
              where TInputDto : class
              where TOutputDto : class
         {
@@ -134,6 +146,13 @@ namespace AgendaUnit.Domain.Services
             _mapper.Map(inputDto, existingEntity);
 
             var entityUpdated = await _baseService.Update(existingEntity);
+
+            //save changes
+            if (isTransaction == null)
+            {
+                _unitOfWork.Commit();
+            }
+
 
             return _mapper.Map<TOutputDto>(entityUpdated);
         }

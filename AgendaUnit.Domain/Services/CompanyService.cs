@@ -1,15 +1,13 @@
+using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 
 namespace AgendaUnit.Domain.Services;
 
-public class CompanyService : BaseService<Company, ICompanyRepository>, ICompanyService
+public class CompanyService : BaseService<Company>, ICompanyService
 {
-    public readonly ICompanyRepository _companyRepository;
-    public CompanyService(ICompanyRepository companyRepository) : base(companyRepository)
+    public CompanyService(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
-        _companyRepository = companyRepository;
     }
-
 }

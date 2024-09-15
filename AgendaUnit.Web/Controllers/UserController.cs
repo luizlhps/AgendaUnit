@@ -4,6 +4,7 @@ using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Application.Services;
+using AgendaUnit.Shared.Attributes;
 using AgendaUnit.Shared.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,12 +28,12 @@ public class UserController : ControllerBase
     [Authorize]
     [Authorize(Roles = "Admin")]
     [HttpGet("{id:int}", Name = "GetUserById")]
-    async public Task<ActionResult<UserObtainedDto>> GetbyId(int id)
+    async public Task<ActionResult> GetbyId(int id)
     {
         return Ok(await _userAppService.GetByIdWithCompany<UserObtainedDto>(id));
     }
     [HttpGet]
-    async public Task<ActionResult<UserListedDto>> GetAll([FromQuery] UserListDto userListDto)
+    async public Task<ActionResult> GetAll([FromQuery] UserListDto userListDto)
     {
 
         return Ok(await _userAppService.GetAll<UserListDto, UserListedDto>(userListDto));
@@ -41,7 +42,9 @@ public class UserController : ControllerBase
 
 
     [HttpPost]
-    async public Task<ActionResult<UserCreatedDto>> Register(UserCreateDto userCreateDto)
+    [SkipVerifySystemConfig]
+    [Route("/register")]
+    async public Task<ActionResult> Register(UserCreateDto userCreateDto)
     {
 
         var userCreatedDto = await _userAppService.Register(userCreateDto);

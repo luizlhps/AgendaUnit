@@ -2,6 +2,7 @@ using AgendaUnit.Application.DTO.AuthenticationManagerDto;
 using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Domain.Models;
+using AgendaUnit.Shared.Attributes;
 using AgendaUnit.Shared.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AgendaUnit.Web.Controllers;
 
 [ApiController]
+[SkipVerifySystemConfig]
 public class AuthenticationManagerController : ControllerBase
 {
     private readonly IAuthenticationManagerService _authenticationManagerService;
@@ -16,6 +18,7 @@ public class AuthenticationManagerController : ControllerBase
 
     public AuthenticationManagerController(IServiceProvider serviceProvider, IAuthenticationManagerService authenticationManagerService, IValidator<LoginRequestDto> loginValidator)
     {
+
         _authenticationManagerService = authenticationManagerService;
         _serviceProvider = serviceProvider;
     }
@@ -43,7 +46,7 @@ public class AuthenticationManagerController : ControllerBase
         return Ok(await _authenticationManagerService.Login(loginRequestDto));
     }
 
-    [HttpPost("RefreshToken")]
+    [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] UserToken userToken)
     {
         return Ok(await _authenticationManagerService.RefreshToken(userToken));

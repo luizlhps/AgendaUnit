@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using AgendaUnit.Application.DTO.AuthenticationManagerDto;
+using AgendaUnit.Application.DTO.SystemConfigurationManager;
 using AgendaUnit.Application.DTO.UserDto;
 using AgendaUnit.Application.Interfaces;
 using AgendaUnit.Application.Interfaces.Services;
@@ -14,25 +15,32 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 
-namespace AgendaUnit.Application.Services;
+namespace AgendaUnit.Application.Services.Managers;
 public class AuthenticationManagerService : IAuthenticationManagerService
 {
     private readonly IUserAppService _userAppService;
     private readonly IConfiguration _configuration;
     private readonly ICommon _common;
     private readonly IUserMemoryCacheService _userMemoryCacheService;
+    private readonly ISystemConfigurationManagerService _systemConfigurationManagerService;
 
-    public AuthenticationManagerService(ICommon common, IUserAppService userAppService, IConfiguration configuration, IUserMemoryCacheService userMemoryCacheService)
+    public AuthenticationManagerService(
+        ICommon common,
+        ISystemConfigurationManagerService systemConfigurationManagerService,
+        IUserAppService userAppService,
+        IConfiguration configuration,
+        IUserMemoryCacheService userMemoryCacheService
+        )
     {
         _userMemoryCacheService = userMemoryCacheService;
         _configuration = configuration;
         _userAppService = userAppService;
         _common = common;
+        _systemConfigurationManagerService = systemConfigurationManagerService;
     }
 
     public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
     {
-
         var userListDto = new UserListDto
         {
             Username = loginRequestDto.Username,
@@ -132,7 +140,7 @@ public class AuthenticationManagerService : IAuthenticationManagerService
             issuer: _configuration["jwt:Issuer"],
             audience: _configuration["jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddSeconds(10),
+            expires: DateTime.Now.AddMinutes(10),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

@@ -5,12 +5,11 @@ using AgendaUnit.Shared.Queries.Interface;
 
 namespace AgendaUnit.Domain.Interfaces.Services
 {
-    public interface IBaseService<TEntity, TRepository>
+    public interface IBaseService<TEntity>
          where TEntity : class, IBaseEntity, new()
-         where TRepository : IBaseRepository<TEntity>
     {
         Task<TEntity> GetById(int id);
-        Task<PageResult<TEntity>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
+        Task<PageResult<TOutputDto>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)
         where TInputDto : QueryParams
         where TOutputDto : class;
         Task<TEntity> Create(TEntity entity);

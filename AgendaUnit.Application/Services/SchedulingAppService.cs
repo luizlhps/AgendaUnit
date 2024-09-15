@@ -1,4 +1,5 @@
 using AgendaUnit.Application.Interfaces.Services;
+using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
@@ -7,10 +8,9 @@ using AutoMapper;
 
 namespace AgendaUnit.Application.Services;
 
-public class SchedulingAppService : Crud<Scheduling, ISchedulingRepository, ISchedulingService>, ISchedulingAppService
+public class SchedulingAppService : Crud<Scheduling, ISchedulingService>, ISchedulingAppService
 {
-    public SchedulingAppService(ISchedulingRepository repository, IMapper mapper, ISchedulingService baseService, IServiceProvider serviceProvider) : base(repository, mapper, baseService, serviceProvider)
+    public SchedulingAppService(IUnitOfWork unitOfWork, IMapper mapper, ISchedulingService baseService, IServiceProvider serviceProvider) : base(unitOfWork, mapper, baseService, serviceProvider)
     {
     }
-
 }

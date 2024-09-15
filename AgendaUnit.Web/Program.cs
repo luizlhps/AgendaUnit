@@ -14,6 +14,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,11 +34,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins(builder.Configuration["cors:url"]).AllowAnyHeader()
-                                .AllowAnyMethod();
+                          policy.WithOrigins("http://localhost:4200")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowCredentials();
                       });
 });
-
 
 /* JWT */
 var secret = builder.Configuration["jwt:Secret"] ?? throw new BaseException("Secret is required");
@@ -88,11 +90,43 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(type => type.ToString());
+
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AgendaUnit", Version = "v1" });
+    c.CustomSchemaIds(s => s.FullName.Replace("+", "."));
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Por favor, insira 'Bearer' [espaço] e o token JWT",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
 });
 
 var app = builder.Build();
+app.UseCors(MyAllowSpecificOrigins);
 app.ConfigureGlobalExceptionsHandler(app.Environment);
 app.UseMiddleware<TokenMiddleware>();
+app.UseMiddleware<SystemConfigurationManagerMiddleware>();
 
 
 if (app.Environment.IsDevelopment())

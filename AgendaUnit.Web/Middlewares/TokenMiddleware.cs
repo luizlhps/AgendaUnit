@@ -44,6 +44,10 @@ public class TokenMiddleware
 
                         common.UserRole = pageResultUser.Items.First().Role.Name;
                         common.UserId = pageResultUser.Items.First().Id;
+
+                        // for use in others middlwares 
+                        context.Items["UserId"] = user.Id;
+                        context.Items["UserRole"] = user.Role.Name;
                     }
                     else
                     {

@@ -22,6 +22,6 @@ public class Service : BaseEntity
     [Column(name: "company_id")]
     public int CompanyId { get; set; }
 
-    public Company Company { get; set; }
+    public Company Company { get; set; } = null!;
 }
 

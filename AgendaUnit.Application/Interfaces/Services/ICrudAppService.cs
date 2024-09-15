@@ -4,7 +4,7 @@ namespace AgendaUnit.Application.Services;
 public interface ICrudAppService<TEntity>
 where TEntity : class, new()
 {
-    Task<TOutputDto> Create<TInputDto, TOutputDto>(TInputDto inputDto)
+    Task<TOutputDto> Create<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
          where TInputDto : class
          where TOutputDto : class;
 
@@ -15,11 +15,11 @@ where TEntity : class, new()
          where TInputDto : QueryParams
         where TOutputDto : class;
 
-    Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto)
+    Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
         where TInputDto : class
         where TOutputDto : class;
 
-    Task<TOutputDto> Delete<TInputDto, TOutputDto>(TInputDto inputDto)
+    Task<TOutputDto> Delete<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
         where TInputDto : class
         where TOutputDto : class;
 }

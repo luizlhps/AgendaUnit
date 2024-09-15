@@ -19,20 +19,34 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Company>()
+        modelBuilder.Entity<Company>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(c => c.Owner)
             .WithMany()
             .HasForeignKey(c => c.OwnerId);
 
+        modelBuilder.Entity<Company>().HasQueryFilter(p => !p.IsDeleted)
+            .HasMany(c => c.Services)
+            .WithOne(s => s.Company)
+            .HasForeignKey(s => s.CompanyId)
+            .IsRequired();
+
+
+        modelBuilder.Entity<Service>().HasQueryFilter(p => !p.IsDeleted)
+            .HasOne(c => c.Company)
+            .WithMany(s => s.Services)
+            .HasForeignKey(s => s.CompanyId)
+            .IsRequired();
+
+
         modelBuilder.Entity<Company>().HasIndex(c => c.OwnerId).IsUnique();
 
-        modelBuilder.Entity<User>()
+        modelBuilder.Entity<User>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(u => u.Role)
             .WithMany()
             .HasForeignKey(u => u.RoleId);
 
 
-        modelBuilder.Entity<User>()
+        modelBuilder.Entity<User>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(u => u.Company)
             .WithMany(c => c.Users)
             .HasForeignKey(u => u.CompanyId);
