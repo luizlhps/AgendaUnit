@@ -1,8 +1,8 @@
 using AgendaUnit.Application.DTO;
 using AgendaUnit.Application.DTO.CompanyDto;
+using AgendaUnit.Application.DTO.ServiceDto;
 using AgendaUnit.Domain.Models;
 using AutoMapper;
-using static AgendaUnit.Application.DTO.CompanyDto.CompanyListedDto;
 
 namespace AgendaUnit.Application.Mappers;
 

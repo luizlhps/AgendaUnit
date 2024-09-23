@@ -6,9 +6,7 @@ public class SchedulingDto
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }
-
-    public string Hours { get; set; }
-
+    public TimeSpan Duration { get; set; }
     public string Notes { get; set; }
 
     public int StatusId { get; set; }

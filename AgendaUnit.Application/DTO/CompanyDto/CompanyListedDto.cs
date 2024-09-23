@@ -15,13 +15,7 @@ public class CompanyListedDto
     [Column(name: "owner_id")]
     public int OwnerId { get; set; }
 
-    /* 
-    public User Owner { get; set; }
-
-    public List<Scheduling>? Scheduling { get; set; }
-
-    public List<Service>? Services { get; set; } */
-
+    public List<SchedulingDto>? Scheduling { get; set; }
     public virtual List<Customer>? Customers { get; set; }
     public virtual List<ServiceDto> Services { get; set; }
     [AutoMap(typeof(Service), ReverseMap = true)]
@@ -51,4 +45,29 @@ public class CompanyListedDto
         public Company Company { get; set; }
 
     }
+    [AutoMap(typeof(Scheduling), ReverseMap = true)]
+    public class SchedulingDto
+    {
+        public DateTime Date { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public string Notes { get; set; }
+
+        public int StatusId { get; set; }
+
+        public string? CancelNote { get; set; }
+
+        public decimal? TotalPrice { get; set; }
+
+        public int StaffUserId { get; set; }
+
+        public int ServiceId { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public int CustomerId { get; set; }
+
+    }
+
 }

@@ -32,6 +32,7 @@ public class UserController : ControllerBase
     {
         return Ok(await _userAppService.GetByIdWithCompany<UserObtainedDto>(id));
     }
+    [Authorize]
     [HttpGet]
     async public Task<ActionResult> GetAll([FromQuery] UserListDto userListDto)
     {

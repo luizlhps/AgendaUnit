@@ -6,7 +6,7 @@ namespace AgendaUnit.Domain.Models
     {
         public DateTime Date { get; set; }
 
-        public string Hours { get; set; }
+        public TimeSpan Duration { get; set; }
 
         public string Notes { get; set; }
 

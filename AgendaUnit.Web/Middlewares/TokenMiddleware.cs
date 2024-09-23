@@ -26,6 +26,12 @@ public class TokenMiddleware
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
 
+            if (jwtToken?.ValidTo < DateTime.Now)
+            {
+                throw new UnauthorizedException("Token expirado.");
+            }
+
+
             if (jwtToken != null)
             {
                 var username = jwtToken.Claims.FirstOrDefault(c => c.Type == "username")?.Value;

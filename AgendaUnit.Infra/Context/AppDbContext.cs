@@ -8,7 +8,6 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-
     public DbSet<User> User { get; set; }
     public DbSet<Service> Service { get; set; }
     public DbSet<Scheduling> Scheduling { get; set; }
@@ -53,6 +52,9 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+
+
+        modelBuilder.Entity<Scheduling>().Property(s => s.Duration).HasColumnType("INTERVAL");
 
 
         base.OnModelCreating(modelBuilder);

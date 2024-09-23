@@ -37,7 +37,7 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
             TypeCompany = systemConfigurationManagerCompanyCreateDto.Company.TypeCompany,
         };
 
-        var systemConfigurationManagerCompanyCreatedDto = await _companyAppService.Create<CompanyCreateDto, SystemConfigurationManagerCompanyCreatedDto>(companyCreateDto);
+        var systemConfigurationManagerCompanyCreatedDto = await _companyAppService.Create<CompanyCreateDto, SystemConfigurationManagerCompanyCreatedDto>(companyCreateDto, true);
 
         return systemConfigurationManagerCompanyCreatedDto;
     }
@@ -69,29 +69,15 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
                 return SystemConfigurationManagerVerifiedDto;
             }
 
-            #endregion
-            #region Verify if company already has a registered service
-
-            if (company.Services?.Count == 0)
-            {
-                SystemConfigurationManagerVerifiedDto = new SystemConfigurationManagerVerifiedDto
-                {
-                    SystemConfigurated = false,
-                    Step = SystemConfigurationStepEnum.ServiceNotCreated,
-                };
-
-                return SystemConfigurationManagerVerifiedDto;
-            }
-
             #endregion 
-            #region Verify if company already has at least one registered customer 
+            #region Verify if company already has at least one scheduling customer 
 
-            if (company.Customers?.Count == 0)
+            if (company.Scheduling?.Count == 0)
             {
                 SystemConfigurationManagerVerifiedDto = new SystemConfigurationManagerVerifiedDto
                 {
                     SystemConfigurated = false,
-                    Step = SystemConfigurationStepEnum.CustomerNotCreated,
+                    Step = SystemConfigurationStepEnum.SchedulingNotCreated,
                 };
 
                 return SystemConfigurationManagerVerifiedDto;

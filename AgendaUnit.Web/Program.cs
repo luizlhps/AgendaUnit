@@ -125,9 +125,6 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
 app.ConfigureGlobalExceptionsHandler(app.Environment);
-app.UseMiddleware<TokenMiddleware>();
-app.UseMiddleware<SystemConfigurationManagerMiddleware>();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -135,13 +132,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(MyAllowSpecificOrigins);
-
 app.UseHttpsRedirection();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<TokenMiddleware>();
+app.UseMiddleware<SystemConfigurationManagerMiddleware>();
 
 app.MapControllers();
 
