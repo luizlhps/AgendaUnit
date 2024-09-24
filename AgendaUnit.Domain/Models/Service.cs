@@ -9,7 +9,7 @@ public class Service : BaseEntity
 {
     public string Name { get; set; }
 
-    public string Duration { get; set; }
+    public TimeSpan Duration { get; set; }
 
     public decimal Price { get; set; }
 

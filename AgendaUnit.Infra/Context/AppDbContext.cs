@@ -55,6 +55,7 @@ public class AppDbContext : DbContext
 
 
         modelBuilder.Entity<Scheduling>().Property(s => s.Duration).HasColumnType("INTERVAL");
+        modelBuilder.Entity<Service>().Property(s => s.Duration).HasColumnType("INTERVAL");
 
 
         base.OnModelCreating(modelBuilder);

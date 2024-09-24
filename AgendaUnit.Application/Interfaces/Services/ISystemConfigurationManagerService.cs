@@ -6,4 +6,5 @@ public interface ISystemConfigurationManagerService
 {
     Task<SystemConfigurationManagerCompanyCreatedDto> CreateCompany(SystemConfigurationManagerCompanyCreateDto systemConfigurationManagerCompanyCreateDto);
     Task<SystemConfigurationManagerVerifiedDto> VerifyAccountConfiguration();
+    Task<SystemConfigurationManagerServiceCreatedDto> CreateService(SystemConfigurationManagerServiceCreateDto systemConfigurationManagerServiceCreateDto);
 }

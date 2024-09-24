@@ -7,6 +7,7 @@ namespace AgendaUnit.Application.DTO.CompanyDto;
 [AutoMap(typeof(Company), ReverseMap = true)]
 public class CompanyListedDto
 {
+    public int Id { get; set; }
     public string Name { get; set; }
 
     [Column(name: "type_company")]

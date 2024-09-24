@@ -49,5 +49,12 @@ public class SystemConfigurationManagerController : ControllerBase
     {
         return Ok(await _systemConfigurationManagerService.CreateCompany(systemConfigurationManagerCompanyCreateDto));
     }
+    [HttpPost("service")]
+    [Authorize]
+    [SkipVerifySystemConfig]
+    public async Task<IActionResult> CreateService([FromBody] SystemConfigurationManagerServiceCreateDto systemConfigurationManagerServiceCreateDto)
+    {
+        return Ok(await _systemConfigurationManagerService.CreateService(systemConfigurationManagerServiceCreateDto));
+    }
 
 }
