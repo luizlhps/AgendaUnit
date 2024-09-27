@@ -21,18 +21,7 @@ public class AppDbContext : DbContext
     {
 
         SchedulingMapping.Configure(modelBuilder);
-
-        modelBuilder.Entity<Company>().HasQueryFilter(p => !p.IsDeleted)
-            .HasOne(c => c.Owner)
-            .WithMany()
-            .HasForeignKey(c => c.OwnerId);
-
-        modelBuilder.Entity<Company>().HasQueryFilter(p => !p.IsDeleted)
-            .HasMany(c => c.Services)
-            .WithOne(s => s.Company)
-            .HasForeignKey(s => s.CompanyId)
-            .IsRequired();
-
+        CompanyMapping.Configure(modelBuilder);
 
         modelBuilder.Entity<Service>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(c => c.Company)
@@ -40,14 +29,10 @@ public class AppDbContext : DbContext
             .HasForeignKey(s => s.CompanyId)
             .IsRequired();
 
-
-        modelBuilder.Entity<Company>().HasIndex(c => c.OwnerId).IsUnique();
-
         modelBuilder.Entity<User>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(u => u.Role)
             .WithMany()
             .HasForeignKey(u => u.RoleId);
-
 
         modelBuilder.Entity<User>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(u => u.Company)
@@ -59,7 +44,6 @@ public class AppDbContext : DbContext
 
 
         modelBuilder.Entity<Service>().Property(s => s.Duration).HasColumnType("INTERVAL");
-
 
 
         base.OnModelCreating(modelBuilder);
