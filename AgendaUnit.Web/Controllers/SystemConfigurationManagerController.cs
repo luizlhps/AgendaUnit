@@ -24,7 +24,7 @@ public class SystemConfigurationManagerController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize("Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetSystemConfiguration()
     {
         var systemConfiguration = await _systemConfigurationManagerService.VerifyAccountConfiguration();
