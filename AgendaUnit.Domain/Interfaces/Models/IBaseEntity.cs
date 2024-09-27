@@ -4,5 +4,5 @@ public interface IBaseEntity
 {
     public int Id { get; set; }
 
-    public DateTimeOffset TimeStamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 }

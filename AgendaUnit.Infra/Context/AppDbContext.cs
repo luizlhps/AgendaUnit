@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Models;
+using AgendaUnit.Infra.Mappers;
 
 namespace AgendaUnit.Infra.Context;
 public class AppDbContext : DbContext
@@ -18,6 +19,9 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        SchedulingMapping.Configure(modelBuilder);
+
         modelBuilder.Entity<Company>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(c => c.Owner)
             .WithMany()
@@ -54,8 +58,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
 
 
-        modelBuilder.Entity<Scheduling>().Property(s => s.Duration).HasColumnType("INTERVAL");
         modelBuilder.Entity<Service>().Property(s => s.Duration).HasColumnType("INTERVAL");
+
 
 
         base.OnModelCreating(modelBuilder);

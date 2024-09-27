@@ -7,7 +7,7 @@ namespace AgendaUnit.Domain.Models;
 public abstract class BaseEntity : IBaseEntity
 {
     public int Id { get; set; }
-    public DateTimeOffset TimeStamp { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 
     [DefaultValue(false)]
     public bool IsDeleted { get; set; }

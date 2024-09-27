@@ -4,36 +4,40 @@ namespace AgendaUnit.Domain.Models
 {
     public class Scheduling : BaseEntity
     {
-        public DateTime Date { get; set; }
+        public int Id { get; set; }
 
-        public TimeSpan Duration { get; set; }
+        public DateTime Date { get; set; }
 
         public string Notes { get; set; }
 
-        [Column(name: "status_id")]
         public int StatusId { get; set; }
-        public Status Status { get; set; }
 
-        [Column(name: "cancel_note")]
-        public string? CancelNote { get; set; }
+        public string CancelNote { get; set; }
 
-        [Column(name: "total_price")]
         public decimal? TotalPrice { get; set; }
 
-        [Column(name: "staff_user_id")]
         public int StaffUserId { get; set; }
-        public User StaffUser { get; set; }
 
-        [Column(name: "service_id")]
         public int ServiceId { get; set; }
-        public Service Service { get; set; }
 
-        [Column(name: "company_id")]
         public int CompanyId { get; set; }
-        public Company Company { get; set; }
 
-        [Column(name: "customer_id")]
         public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+
+        public DateTime Timestamp { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public virtual Status Status { get; set; }
+
+        public virtual Company Company { get; set; }
+
+        public virtual Customer Customer { get; set; }
+
+        public virtual Service Service { get; set; }
+
+        public virtual User User { get; set; }
     }
 }
