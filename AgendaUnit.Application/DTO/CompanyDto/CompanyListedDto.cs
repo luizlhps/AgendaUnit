@@ -16,12 +16,14 @@ public class CompanyListedDto
     [Column(name: "owner_id")]
     public int OwnerId { get; set; }
 
-    public List<SchedulingDto>? Scheduling { get; set; }
+    public List<SchedulingDto>? Schedulings { get; set; }
     public virtual List<Customer>? Customers { get; set; }
     public virtual List<ServiceDto> Services { get; set; }
     [AutoMap(typeof(Service), ReverseMap = true)]
     public class ServiceDto
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
         public string Duration { get; set; }

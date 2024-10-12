@@ -41,5 +41,7 @@ namespace AgendaUnit.Domain.Models
         [Column(name: "company_id")]
         public int? CompanyId { get; set; }
         public Company Company { get; set; }
+
+        public List<Scheduling> Schedulings { get; set; }
     }
 }

@@ -56,5 +56,20 @@ public class SystemConfigurationManagerController : ControllerBase
     {
         return Ok(await _systemConfigurationManagerService.CreateService(systemConfigurationManagerServiceCreateDto));
     }
+    [HttpGet("service")]
+    [Authorize]
+    [SkipVerifySystemConfig]
+    public async Task<IActionResult> CreateService()
+    {
+        return Ok(await _systemConfigurationManagerService.ObtainService());
+    }
+
+    [HttpPost("scheduling")]
+    [Authorize]
+    [SkipVerifySystemConfig]
+    public async Task<IActionResult> CreateScheduling([FromBody] SystemConfigurationManagerSchedulingCreateDto systemConfigurationManagerSchedulingCreateDto)
+    {
+        return Ok(await _systemConfigurationManagerService.CreateScheduling(systemConfigurationManagerSchedulingCreateDto));
+    }
 
 }

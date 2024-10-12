@@ -71,6 +71,10 @@ builder.Services.AddAuthentication(opt =>
 /* Memory Cache */
 builder.Services.AddMemoryCache();
 
+//Validators
+builder.Services.AddValidatorsFromAssembly(Assembly.Load("AgendaUnit.Application"));
+
+/* Controllers */
 /* JSON Options */
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -78,12 +82,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 
 });
-
-//Validators
-builder.Services.AddValidatorsFromAssembly(Assembly.Load("AgendaUnit.Application"));
-
-/* Controllers */
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 /* Swagger */
@@ -123,6 +121,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+
 app.UseCors(MyAllowSpecificOrigins);
 app.ConfigureGlobalExceptionsHandler(app.Environment);
 

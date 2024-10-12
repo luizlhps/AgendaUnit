@@ -7,6 +7,8 @@ using AgendaUnit.Domain.Models;
 
 public class Service : BaseEntity
 {
+
+
     public string Name { get; set; }
 
     public TimeSpan Duration { get; set; }
@@ -23,5 +25,7 @@ public class Service : BaseEntity
     public int CompanyId { get; set; }
 
     public Company Company { get; set; } = null!;
+
+    public List<Scheduling> Schedulings { get; set; }
 }
 

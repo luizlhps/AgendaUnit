@@ -16,6 +16,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AgendaUnit.Infra;
 
@@ -78,7 +79,8 @@ public static class DependencyInjection
         string connectionString = configuration["ConnectionStrings:PostSqlDBConnection"];
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(connectionString).EnableSensitiveDataLogging().UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); })))
+            ;
 
         return services;
     }

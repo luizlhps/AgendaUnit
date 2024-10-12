@@ -21,6 +21,33 @@ public class SchedulingMapping
         modelBuilder.Entity<Scheduling>().Property(x => x.Timestamp).HasColumnName(@"timestamp").HasColumnType(@"timestamptz").IsRequired().ValueGeneratedNever();
         modelBuilder.Entity<Scheduling>().Property(x => x.IsDeleted).HasColumnName(@"isdeleted").HasColumnType(@"bool").IsRequired().ValueGeneratedNever();
         modelBuilder.Entity<Scheduling>().Property(x => x.Duration).HasColumnName(@"duration").HasColumnType(@"interval").IsRequired().ValueGeneratedOnAdd().HasPrecision(6).HasDefaultValueSql(@"'00:00:00'");
-        modelBuilder.Entity<Scheduling>().HasKey(@"Id");
+        modelBuilder.Entity<Scheduling>().HasKey(s => s.Id);
+
+        modelBuilder.Entity<Scheduling>()
+                    .HasOne(c => c.User)
+                    .WithMany(s => s.Schedulings)
+                    .HasForeignKey(s => s.StaffUserId);
+
+        modelBuilder.Entity<Scheduling>()
+            .HasOne(c => c.Company)
+            .WithMany(s => s.Schedulings)
+            .HasForeignKey(c => c.CompanyId);
+
+        modelBuilder.Entity<Scheduling>()
+            .HasOne(c => c.Service)
+            .WithMany(s => s.Schedulings)
+            .HasForeignKey(c => c.ServiceId);
+
+        modelBuilder.Entity<Scheduling>()
+            .HasOne(c => c.Customer)
+            .WithMany(s => s.Schedulings)
+            .HasForeignKey(c => c.CustomerId);
+
+        modelBuilder.Entity<Scheduling>()
+             .HasOne(c => c.Status)
+             .WithOne(s => s.Scheduling)
+             .HasForeignKey<Scheduling>(c => c.StatusId)
+             .IsRequired();
+
     }
 }

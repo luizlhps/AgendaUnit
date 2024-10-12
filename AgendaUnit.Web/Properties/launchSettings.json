@@ -8,6 +8,14 @@
       "sslPort": 44328
     }
   },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Information",
+      "Microsoft.EntityFrameworkCore": "Information"
+    }
+  },
   "profiles": {
     "http": {
       "commandName": "Project",

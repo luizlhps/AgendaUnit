@@ -7,11 +7,7 @@ namespace AgendaUnit.Domain.Models
     public class Company : BaseEntity
     {
         public string Name { get; set; }
-
-        [Column(name: "type_company")]
         public string TypeCompany { get; set; }
-
-        [Column(name: "owner_id")]
         public int OwnerId { get; set; }
         public User Owner { get; set; }
 
@@ -19,7 +15,7 @@ namespace AgendaUnit.Domain.Models
 
         public List<Customer>? Customers { get; set; }
 
-        public List<Scheduling>? Scheduling { get; set; }
+        public List<Scheduling>? Schedulings { get; set; }
 
         public List<Service>? Services { get; set; }
     }

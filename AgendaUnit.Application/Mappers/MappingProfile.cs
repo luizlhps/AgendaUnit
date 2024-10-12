@@ -12,7 +12,6 @@ public class MappingProfile : Profile
     {
         /*  CreateMap<User, UserDto>().ReverseMap(); */
         CreateMap<Service, ServiceDto>().ReverseMap();
-        CreateMap<Scheduling, SchedulingDto>().ReverseMap();
         /*  CreateMap<Customer, CustomerDto>().ReverseMap(); */
         CreateMap<Company, CompanyDto>().ReverseMap();
     }

@@ -2,6 +2,7 @@ using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Infrastructure.Repositories;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AgendaUnit.Infra.Context;
 
@@ -10,6 +11,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly Dictionary<Type, object> _repositories = new();
+    private IDbContextTransaction _transaction;
 
     public UnitOfWork(AppDbContext context, IMapper mapper)
     {
@@ -17,14 +19,30 @@ public class UnitOfWork : IUnitOfWork
         _mapper = mapper;
     }
 
-    public void Commit()
+    public async Task BeginTransactionAsync()
     {
-        _context.SaveChangesAsync();
+        _transaction = await _context.Database.BeginTransactionAsync();
     }
 
-    public void Dispose()
+    public async Task CommitTransactionAsync()
     {
-        _context.Dispose();
+        await _transaction.CommitAsync();
+    }
+
+    public async Task Commit()
+    {
+        await _context.SaveChangesAsync();
+
+    }
+
+    public async Task RollbackAsync()
+    {
+        await _transaction.RollbackAsync();
+    }
+
+    public async Task Dispose()
+    {
+        await _context.DisposeAsync();
     }
 
     public IBaseRepository<TEntity> BaseRepository<TEntity>() where TEntity : class

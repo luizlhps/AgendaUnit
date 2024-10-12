@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgendaUnit.Domain.Models
@@ -23,8 +24,6 @@ namespace AgendaUnit.Domain.Models
         public int CompanyId { get; set; }
 
         public int CustomerId { get; set; }
-
-        public DateTime Timestamp { get; set; }
 
         public bool IsDeleted { get; set; }
 

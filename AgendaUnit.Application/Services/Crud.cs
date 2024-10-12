@@ -45,7 +45,7 @@ namespace AgendaUnit.Domain.Services
             //save changes
             if (isTransaction == null)
             {
-                _unitOfWork.Commit();
+                await _unitOfWork.Commit();
             }
 
             return _mapper.Map<TOutputDto>(createdEntity);
