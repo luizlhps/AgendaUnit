@@ -29,4 +29,53 @@ public class SchedulingListedDto
 
     public bool IsDeleted { get; set; }
 
+    public TimeSpan Duration { get; set; }
+
+    public virtual StatusDto Status { get; set; }
+
+    public virtual CustomerDto Customer { get; set; }
+
+    public virtual ServiceDto Service { get; set; }
+
+    public virtual UserDto User { get; set; }
+
+    [AutoMap(typeof(User), ReverseMap = true)]
+    public class UserDto
+    {
+        public string Name { get; set; }
+
+        public string Username { get; set; }
+
+        public Role Role { get; set; }
+
+        public string Phone { get; set; }
+    }
+
+    [AutoMap(typeof(Customer), ReverseMap = true)]
+    public class CustomerDto
+    {
+        public string Name { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Email { get; set; }
+    }
+
+    [AutoMap(typeof(Service), ReverseMap = true)]
+    public class ServiceDto
+    {
+
+        public string Name { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public decimal Price { get; set; }
+    }
+    [AutoMap(typeof(Status), ReverseMap = true)]
+    public class StatusDto
+    {
+
+        public string Name { get; set; }
+
+    }
 }

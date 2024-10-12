@@ -130,7 +130,30 @@ namespace AgendaUnit.Infrastructure.Repositories
                 {
                     if (property.PropertyType == typeof(string))
                     {
-                        query = query.Where(item => EF.Property<string>(item, property.Name).Contains(value.ToString()));
+                        var stringValue = value.ToString();
+
+                        //attributes
+                        var stringEqualsAttribute = property.GetCustomAttribute(typeof(StringEqualsAttribute));
+                        var caseInsensitiveAttribute = property.GetCustomAttribute(typeof(CaseStringInsensitiveAttribute));
+
+                        // string equals
+                        if (stringEqualsAttribute != null)
+                        {
+                            query = query.Where(item =>
+                                    (caseInsensitiveAttribute != null
+                                          ? EF.Property<string>(item, property.Name).ToLower() == stringValue.ToLower()
+                                          : EF.Property<string>(item, property.Name) == stringValue));
+                        }
+                        else
+                        {
+                            // contains %Value%
+                            query = query.Where(item =>
+                                    (caseInsensitiveAttribute != null
+                                            ? EF.Property<string>(item, property.Name).ToLower().Contains(stringValue.ToLower())
+                                            : EF.Property<string>(item, property.Name).Contains(stringValue)));
+
+                        }
+
                         continue;
                     }
                     if (property.PropertyType == typeof(bool))
@@ -144,7 +167,6 @@ namespace AgendaUnit.Infrastructure.Repositories
                         {
                             if ((DateTime)value != DateTime.MinValue)
                             {
-
                                 query = query.Where(item => EF.Property<DateTime>(item, property.Name).Date == ((DateTime)value).Date);
                             }
 
@@ -206,7 +228,7 @@ namespace AgendaUnit.Infrastructure.Repositories
             }
             else
             {
-                int totalItems = await query.CountAsync();
+                int totalItems = await query.CountAsync(); //TODO FIX IT
                 int pageNumber = inputDto.PaginationProperties.PageNumber > 0 ? inputDto.PaginationProperties.PageNumber - 1 : 0;
                 int pageSize = inputDto.PaginationProperties.PageSize > 0 ? inputDto.PaginationProperties.PageSize : 10;
                 int totalPages = (int)Math.Ceiling((decimal)totalItems / pageSize);
