@@ -3,6 +3,8 @@ using System.Reflection;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Infra.Context;
+using AgendaUnit.Shared.Attributes;
+using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Shared.Queries;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -95,6 +97,31 @@ namespace AgendaUnit.Infrastructure.Repositories
             var dtoProperties = typeof(TInputDto).GetProperties()
             .Where(dtoProperties => !baseProperties.Any(baseProperties => baseProperties.Name == dtoProperties.Name));
 
+
+            var dateRangeProperty = dtoProperties.FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(DateRangeAttribute)));
+
+            if (dateRangeProperty != null)
+            {
+                var dateRangeValue = (DateRangeAttribute)Attribute.GetCustomAttribute(dateRangeProperty, typeof(DateRangeAttribute));
+
+                var dateStartProperty = typeof(TInputDto).GetProperty("StartDate");
+                var dateEndProperty = typeof(TInputDto).GetProperty("EndDate");
+
+                if (dateEndProperty != null && dateStartProperty != null)
+                {
+                    var startValue = (DateTime)dateStartProperty.GetValue(inputDto);
+                    var endValue = (DateTime)dateEndProperty.GetValue(inputDto);
+
+                    query = query.Where(item =>
+                    EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) >= startValue &&
+                    EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) <= endValue);
+
+                }
+            }
+
+
+
+
             foreach (var property in dtoProperties)
             {
                 var value = property.GetValue(inputDto, null);
@@ -111,8 +138,19 @@ namespace AgendaUnit.Infrastructure.Repositories
                         query = query.Where(item => EF.Property<bool>(item, property.Name).Equals(value));
                         continue;
                     }
-                    if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum)
+                    if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum && !property.Name.Equals("StartDate") && !property.Name.Equals("EndDate"))
                     {
+                        if (property.PropertyType.Name.Equals("DateTime"))
+                        {
+                            if ((DateTime)value != DateTime.MinValue)
+                            {
+
+                                query = query.Where(item => EF.Property<DateTime>(item, property.Name).Date == ((DateTime)value).Date);
+                            }
+
+                            continue;
+                        }
+
                         query = query.Where(item => EF.Property<object>(item, property.Name).Equals(value));
                         continue;
                     }

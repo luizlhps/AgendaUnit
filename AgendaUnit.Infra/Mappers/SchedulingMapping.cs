@@ -10,7 +10,7 @@ public class SchedulingMapping
         modelBuilder.Entity<Scheduling>().ToTable(@"scheduling", @"public");
         modelBuilder.Entity<Scheduling>().Property(x => x.Id).HasColumnName(@"id").HasColumnType(@"int4").IsRequired().ValueGeneratedOnAdd();
         modelBuilder.Entity<Scheduling>().Property(x => x.Date).HasColumnName(@"date").HasColumnType(@"timestamptz").IsRequired().ValueGeneratedNever();
-        modelBuilder.Entity<Scheduling>().Property(x => x.Notes).HasColumnName(@"notes").HasColumnType(@"text").IsRequired().ValueGeneratedNever();
+        modelBuilder.Entity<Scheduling>().Property(x => x.Notes).HasColumnName(@"notes").HasColumnType(@"text").ValueGeneratedNever();
         modelBuilder.Entity<Scheduling>().Property(x => x.StatusId).HasColumnName(@"status_id").HasColumnType(@"int4").IsRequired().ValueGeneratedNever();
         modelBuilder.Entity<Scheduling>().Property(x => x.CancelNote).HasColumnName(@"cancel_note").HasColumnType(@"text").ValueGeneratedNever();
         modelBuilder.Entity<Scheduling>().Property(x => x.TotalPrice).HasColumnName(@"total_price").HasColumnType(@"numeric").ValueGeneratedNever();

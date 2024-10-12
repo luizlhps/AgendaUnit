@@ -59,7 +59,7 @@ public class SystemConfigurationManagerController : ControllerBase
     [HttpGet("service")]
     [Authorize]
     [SkipVerifySystemConfig]
-    public async Task<IActionResult> CreateService()
+    public async Task<IActionResult> ObtainService()
     {
         return Ok(await _systemConfigurationManagerService.ObtainService());
     }

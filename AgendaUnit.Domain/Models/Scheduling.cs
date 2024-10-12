@@ -9,11 +9,11 @@ namespace AgendaUnit.Domain.Models
 
         public DateTime Date { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         public int StatusId { get; set; }
 
-        public string CancelNote { get; set; }
+        public string? CancelNote { get; set; }
 
         public decimal? TotalPrice { get; set; }
 
