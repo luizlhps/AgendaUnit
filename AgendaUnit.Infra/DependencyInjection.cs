@@ -5,7 +5,6 @@ using AgendaUnit.Application.Services;
 using AgendaUnit.Application.Services.Managers;
 using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Repositories;
-using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Services;
 using AgendaUnit.Infra.Context;
 using AgendaUnit.Infra.CrossCutting.MemoryCacheServices;
@@ -43,13 +42,6 @@ public static class DependencyInjection
         services.AddScoped<IUserAppService, UserAppService>();
         services.AddScoped<IAuthenticationManagerService, AuthenticationManagerService>();
         services.AddScoped<ISystemConfigurationManagerService, SystemConfigurationManagerService>();
-
-        // domain services
-        services.AddScoped<ICompanyService, CompanyService>();
-        services.AddScoped<ICustomerService, CustomerService>();
-        services.AddScoped<ISchedulingService, SchedulingService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IServiceService, ServiceService>();
 
 
         // repositories

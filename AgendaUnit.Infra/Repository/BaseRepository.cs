@@ -9,8 +9,6 @@ using AgendaUnit.Shared.Queries;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AgendaUnit.Infrastructure.Repositories
 {
@@ -31,7 +29,7 @@ namespace AgendaUnit.Infrastructure.Repositories
         }
 
 
-        public async Task<TEntity> Create(TEntity entity)
+        public async virtual Task<TEntity> Create(TEntity entity)
         {
             _appDbContext.Set<TEntity>().Add(entity);
             // await _appDbContext.SaveChangesAsync();
@@ -109,12 +107,16 @@ namespace AgendaUnit.Infrastructure.Repositories
 
                 if (dateEndProperty != null && dateStartProperty != null)
                 {
-                    var startValue = (DateTime)dateStartProperty.GetValue(inputDto);
-                    var endValue = (DateTime)dateEndProperty.GetValue(inputDto);
+                    var startValue = dateStartProperty.GetValue(inputDto, null);
+                    var endValue = dateEndProperty.GetValue(inputDto, null);
 
-                    query = query.Where(item =>
-                    EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) >= startValue &&
-                    EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) <= endValue);
+                    if (startValue != null && endValue != null)
+                    {
+                        query = query.Where(item =>
+                        EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) >= (DateTime)startValue &&
+                        EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) <= (DateTime)endValue);
+
+                    }
 
                 }
             }

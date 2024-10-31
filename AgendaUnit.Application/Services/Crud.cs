@@ -3,7 +3,6 @@ using AgendaUnit.Application.Services;
 using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Models;
 using AgendaUnit.Domain.Interfaces.Repositories;
-using AgendaUnit.Domain.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Shared.Queries;
@@ -14,21 +13,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AgendaUnit.Domain.Services
 {
-    public class Crud<TEntity, TBaseService> : ICrudAppService<TEntity>
+    public class Crud<TEntity> : ICrudAppService<TEntity>
         where TEntity : class, IBaseEntity, new()
-        where TBaseService : IBaseService<TEntity>
     {
 
-        protected readonly TBaseService _baseService;
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IMapper _mapper;
         protected readonly IServiceProvider _serviceProvider;
 
-        public Crud(IUnitOfWork unitOfWork, IMapper mapper, TBaseService baseService, IServiceProvider serviceProvider)
+        public Crud(IUnitOfWork unitOfWork, IMapper mapper, IServiceProvider serviceProvider)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _baseService = baseService;
             _serviceProvider = serviceProvider;
         }
 
@@ -40,7 +36,7 @@ namespace AgendaUnit.Domain.Services
 
             var entity = _mapper.Map<TEntity>(inputDto);
 
-            var createdEntity = await _baseService.Create(entity);
+            var createdEntity = await CreateExec(entity);
 
             //save changes
             if (isTransaction == null)
@@ -51,18 +47,27 @@ namespace AgendaUnit.Domain.Services
             return _mapper.Map<TOutputDto>(createdEntity);
         }
 
+        async public virtual Task<TEntity> CreateExec(TEntity entity)
+        {
+            var createdEntity = await _unitOfWork.BaseRepository<TEntity>().Create(entity);
+
+            return createdEntity;
+        }
+
+
+
         async public Task<TOutputDto> Delete<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
             where TInputDto : class
             where TOutputDto : class
         {
             var entity = _mapper.Map<TEntity>(inputDto);
 
-            var deletedEntity = await _baseService.Delete(entity.Id);
+            var deletedEntity = await _unitOfWork.BaseRepository<TEntity>().Delete(entity.Id);
 
             //save changes
             if (isTransaction == null)
             {
-                _unitOfWork.Commit();
+                await _unitOfWork.Commit();
             }
 
             return _mapper.Map<TOutputDto>(deletedEntity);
@@ -73,45 +78,16 @@ namespace AgendaUnit.Domain.Services
             where TOutputDto : class
         {
 
-            var entities = await _baseService.GetAll<TInputDto, TOutputDto>(inputDto);
-
-            var pageResult = new PageResult<TOutputDto>
-            {
-                Items = [],
-                PageNumber = entities.PageNumber,
-                PageSize = entities.PageSize,
-                TotalCount = entities.TotalCount
-            };
-
-            if (entities.Items.Count > 0)
-            {
-                var teste = _mapper.Map<List<TOutputDto>>(entities.Items);
-                pageResult.Items = teste;
-            }
-
-            return pageResult;
+            return await _unitOfWork.BaseRepository<TEntity>().GetAll<TInputDto, TOutputDto>(inputDto);
         }
 
 
         async public Task<TOutputDto> GetById<TOutputDto>(int id)
             where TOutputDto : class
         {
-            try
-            {
-                var entity = await _baseService.GetById(id);
+            var entity = await _unitOfWork.BaseRepository<TEntity>().GetById(id);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException($"{id} is not found");
-                }
-
-                return _mapper.Map<TOutputDto>(entity);
-            }
-            catch (System.Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            return _mapper.Map<TOutputDto>(entity);
         }
 
 
@@ -141,16 +117,16 @@ namespace AgendaUnit.Domain.Services
                 throw new BadRequestException(modelState, "Id não do tipo int");
             }
 
-            var existingEntity = await _baseService.GetById(id);
+            var existingEntity = await _unitOfWork.BaseRepository<TEntity>().GetById(id);
 
             _mapper.Map(inputDto, existingEntity);
 
-            var entityUpdated = await _baseService.Update(existingEntity);
+            var entityUpdated = await _unitOfWork.BaseRepository<TEntity>().Update(existingEntity);
 
             //save changes
             if (isTransaction == null)
             {
-                _unitOfWork.Commit();
+                await _unitOfWork.Commit();
             }
 
 

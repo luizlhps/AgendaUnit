@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     [HttpGet("{id:int}", Name = "GetUserById")]
     async public Task<ActionResult> GetbyId(int id)
     {
-        return Ok(await _userAppService.GetByIdWithCompany<UserObtainedDto>(id));
+        return Ok(await _userAppService.GetById<UserObtainedDto>(id));
     }
     [Authorize]
     [HttpGet]

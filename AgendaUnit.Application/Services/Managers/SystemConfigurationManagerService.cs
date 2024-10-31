@@ -23,11 +23,13 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
     private readonly IUnitOfWork __unitOfWork;
     private readonly ICustomerAppService _customerAppService;
     private readonly ISchedulingAppService _schedulingAppService;
+    private readonly IUserAppService _userAppService;
 
-    public SystemConfigurationManagerService(ISchedulingAppService schedulingAppService, ICustomerAppService customerAppService, IUnitOfWork unitOfWork, ICommon common, IServiceProvider serviceProvider, IServiceAppService serviceAppService, ICompanyAppService companyService)
+    public SystemConfigurationManagerService(IUserAppService userAppService, ISchedulingAppService schedulingAppService, ICustomerAppService customerAppService, IUnitOfWork unitOfWork, ICommon common, IServiceProvider serviceProvider, IServiceAppService serviceAppService, ICompanyAppService companyService)
     {
         _schedulingAppService = schedulingAppService;
         _customerAppService = customerAppService;
+        _userAppService = userAppService;
         __unitOfWork = unitOfWork;
         _common = common;
         _companyAppService = companyService;
@@ -52,6 +54,7 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
             throw new ConflictException("Você já possui uma empresa cadastrada.");
         }
 
+        // adicionar transação no repo para criação de company e vinculo de usuario para aquele empresa
         var companyCreateDto = new CompanyCreateDto
         {
             Name = systemConfigurationManagerCompanyCreateDto.Company.Name,
@@ -59,7 +62,8 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
             TypeCompany = systemConfigurationManagerCompanyCreateDto.Company.TypeCompany,
         };
 
-        var companyCreatedDto = await _companyAppService.Create<CompanyCreateDto, CompanyCreatedDto>(companyCreateDto);
+
+        var companyCreatedDto = await _companyAppService.Create<CompanyCreateDto, CompanyCreatedDto>(companyCreateDto, true);
 
         var systemConfigurationManagerCompanyCreatedDto = new SystemConfigurationManagerCompanyCreatedDto
         {

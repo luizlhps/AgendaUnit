@@ -1,4 +1,5 @@
 
+using System;
 using AgendaUnit.Domain.Interfaces.Repositories;
 
 namespace AgendaUnit.Domain.Interfaces.Context;
@@ -12,3 +13,4 @@ public interface IUnitOfWork
 
     Task RollbackAsync();
 }
+

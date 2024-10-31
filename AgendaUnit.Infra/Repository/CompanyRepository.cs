@@ -11,4 +11,5 @@ public class CompanyRepository : BaseRepository<Company>, ICompanyRepository
     public CompanyRepository(AppDbContext appDbContext, IMapper mapper) : base(appDbContext, mapper)
     {
     }
+
 }

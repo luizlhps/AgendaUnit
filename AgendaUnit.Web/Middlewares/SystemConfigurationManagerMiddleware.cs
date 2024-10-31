@@ -23,7 +23,6 @@ public class SystemConfigurationManagerMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var endpoint = context.GetEndpoint();
-        var test = context.Items.ContainsKey("UserId");
         var userId = context.Items["UserId"];
 
         if (endpoint != null)
@@ -56,9 +55,10 @@ public class SystemConfigurationManagerMiddleware
                             name = "SYSTEM_CONFIG",
                             etapa = systemConfiguration.Step.ToString()
                         });
+
+                        return;
                     }
 
-                    return;
                 }
             }
 
