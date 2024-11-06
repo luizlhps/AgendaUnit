@@ -11,6 +11,7 @@ using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Shared.Utils.ValidatorHelper;
 using AgendaUnit.Application.DTO.CustomerDto;
 using AgendaUnit.Domain.Interfaces.Context;
+using AgendaUnit.Domain.Services;
 
 namespace AgendaUnit.Application.Services.Managers;
 
@@ -211,19 +212,36 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
 
         #region Create Scheduling
 
-        var schedulingCreateDto = new SchedulingCreateDto
+        var service = company.Services.First();
+        var schedulingServices = systemConfigurationManagerSchedulingCreateDto.Scheduling.SchedulingServices;
+
+
+        var scheduling = new Scheduling
         {
             CompanyId = company.Id,
             Date = systemConfigurationManagerSchedulingCreateDto.Scheduling.Date,
-            ServiceId = company.Services.FirstOrDefault().Id,
             StatusId = (int)StatusEnum.Active,
             StaffUserId = userId,
-            TotalPrice = systemConfigurationManagerSchedulingCreateDto.Scheduling.TotalPrice,
             CustomerId = customerCreatedDto.Id,
             Duration = duration,
+            SchedulingServices = new List<Domain.Models.SchedulingService>()
         };
 
-        var schedulingCreatedDto = await _schedulingAppService.Create<SchedulingCreateDto, SchedulingCreatedDto>(schedulingCreateDto);
+        var schedulingCreatedDto = await _schedulingAppService.Create<Scheduling, SchedulingCreatedDto>(scheduling);
+
+        var schedulingService = new Domain.Models.SchedulingService
+        {
+            ServiceId = service.Id,
+            SchedulingId = scheduling.Id,
+            Name = service.Name,
+            Price = schedulingServices.Price,
+            TotalPrice = schedulingServices.Price,
+            Discount = schedulingServices.Discount
+        };
+
+        scheduling.SchedulingServices.Add(schedulingService);
+
+        await __unitOfWork.Commit();
 
         #endregion
 

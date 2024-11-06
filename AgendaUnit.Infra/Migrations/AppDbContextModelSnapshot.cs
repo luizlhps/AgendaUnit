@@ -146,7 +146,6 @@ namespace AgendaUnit.Infra.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CancelNote")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("cancel_note");
 
@@ -174,13 +173,8 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("isdeleted");
 
                     b.Property<string>("Notes")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("notes");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int4")
-                        .HasColumnName("service_id");
 
                     b.Property<int>("StaffUserId")
                         .HasColumnType("int4")
@@ -207,9 +201,6 @@ namespace AgendaUnit.Infra.Migrations
                     b.HasIndex("CustomerId")
                         .HasDatabaseName("ix_scheduling_customer_id");
 
-                    b.HasIndex("ServiceId")
-                        .HasDatabaseName("ix_scheduling_service_id");
-
                     b.HasIndex("StaffUserId")
                         .HasDatabaseName("ix_scheduling_staff_user_id");
 
@@ -218,6 +209,46 @@ namespace AgendaUnit.Infra.Migrations
                         .HasDatabaseName("ix_scheduling_status_id");
 
                     b.ToTable("scheduling", "public");
+                });
+
+            modelBuilder.Entity("AgendaUnit.Domain.Models.SchedulingService", b =>
+                {
+                    b.Property<int>("SchedulingId")
+                        .HasColumnType("int4")
+                        .HasColumnName("scheduling_id");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer")
+                        .HasColumnName("service_id");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("double precision")
+                        .HasColumnName("discount");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bool")
+                        .HasColumnName("isdeleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision")
+                        .HasColumnName("price");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double precision")
+                        .HasColumnName("total_price");
+
+                    b.HasKey("SchedulingId", "ServiceId")
+                        .HasName("pk_scheduling_service");
+
+                    b.HasIndex("ServiceId")
+                        .HasDatabaseName("ix_scheduling_service_service_id");
+
+                    b.ToTable("scheduling_service", "public");
                 });
 
             modelBuilder.Entity("AgendaUnit.Domain.Models.Service", b =>
@@ -428,13 +459,6 @@ namespace AgendaUnit.Infra.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_scheduling_customer_customer_id");
 
-                    b.HasOne("AgendaUnit.Domain.Models.Service", "Service")
-                        .WithMany("Schedulings")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_scheduling_service_service_id");
-
                     b.HasOne("AgendaUnit.Domain.Models.User", "User")
                         .WithMany("Schedulings")
                         .HasForeignKey("StaffUserId")
@@ -453,11 +477,30 @@ namespace AgendaUnit.Infra.Migrations
 
                     b.Navigation("Customer");
 
-                    b.Navigation("Service");
-
                     b.Navigation("Status");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AgendaUnit.Domain.Models.SchedulingService", b =>
+                {
+                    b.HasOne("AgendaUnit.Domain.Models.Scheduling", "Scheduling")
+                        .WithMany("SchedulingServices")
+                        .HasForeignKey("SchedulingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_scheduling_service_scheduling_scheduling_id");
+
+                    b.HasOne("AgendaUnit.Domain.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_scheduling_service_service_service_id");
+
+                    b.Navigation("Scheduling");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("AgendaUnit.Domain.Models.Service", b =>
@@ -516,9 +559,9 @@ namespace AgendaUnit.Infra.Migrations
                     b.Navigation("Schedulings");
                 });
 
-            modelBuilder.Entity("AgendaUnit.Domain.Models.Service", b =>
+            modelBuilder.Entity("AgendaUnit.Domain.Models.Scheduling", b =>
                 {
-                    b.Navigation("Schedulings");
+                    b.Navigation("SchedulingServices");
                 });
 
             modelBuilder.Entity("AgendaUnit.Domain.Models.Status", b =>

@@ -42,8 +42,23 @@ public class AuthenticationManagerController : ControllerBase
             }
         }
 
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTime.Now.AddHours(1),
+            Secure = false
+        };
 
-        return Ok(await _authenticationManagerService.Login(loginRequestDto));
+        var loginResponseDto = await _authenticationManagerService.Login(loginRequestDto);
+
+        Response.Cookies.Append("token", loginResponseDto.Token, cookieOptions);
+
+
+        cookieOptions.Expires = DateTime.Now.AddDays(7);
+        Response.Cookies.Append("refresh_token", loginResponseDto.Token, cookieOptions);
+
+        return Ok(loginResponseDto);
     }
 
     [HttpPost("refresh-token")]

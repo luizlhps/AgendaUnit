@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
 
         SchedulingMapping.Configure(modelBuilder);
         CompanyMapping.Configure(modelBuilder);
+        SchedulingServiceMapping.Configure(modelBuilder);
 
         modelBuilder.Entity<Service>().HasQueryFilter(p => !p.IsDeleted)
             .HasOne(c => c.Company)

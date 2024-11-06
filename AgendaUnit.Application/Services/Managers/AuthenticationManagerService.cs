@@ -11,6 +11,7 @@ using AgendaUnit.Application.Interfaces.Services;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Shared.CrossCutting;
 using AgendaUnit.Shared.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

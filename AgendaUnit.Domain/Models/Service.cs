@@ -26,6 +26,5 @@ public class Service : BaseEntity
 
     public Company Company { get; set; } = null!;
 
-    public List<Scheduling> Schedulings { get; set; }
 }
 

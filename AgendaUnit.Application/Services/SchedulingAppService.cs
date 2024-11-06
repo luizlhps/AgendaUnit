@@ -16,11 +16,31 @@ public class SchedulingAppService : Crud<Scheduling>, ISchedulingAppService
     private readonly ICommon _common;
     private readonly IUserAppService _userAppService;
 
-    public SchedulingAppService(IUnitOfWork unitOfWork, IMapper mapper, IServiceProvider serviceProvider) : base(unitOfWork, mapper, serviceProvider)
+    public SchedulingAppService(
+        IUserAppService userAppService
+        , ICommon common
+        , IUnitOfWork unitOfWork
+        , IMapper mapper
+        , IServiceProvider serviceProvider
+        ) : base(unitOfWork, mapper, serviceProvider)
     {
+        _common = common;
+        _userAppService = userAppService;
     }
 
     public async Task<PageResult<SchedulingListedDto>> GetAllSchedulesByCompany(SchedulingListDto schedulingListDto)
+    {
+        var userId = _common.UserId;
+        var user = await _userAppService.GetById<UserObtainedDto>(userId);
+
+        schedulingListDto.CompanyId = user.CompanyId;
+
+        var schedules = await GetAll<SchedulingListDto, SchedulingListedDto>(schedulingListDto);
+
+        return schedules;
+    }
+
+    public async Task<PageResult<SchedulingListedDto>> CreateExec(SchedulingListDto schedulingListDto)
     {
         var userId = _common.UserId;
         var user = await _userAppService.GetById<UserObtainedDto>(userId);

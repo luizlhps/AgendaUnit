@@ -1,21 +1,15 @@
 
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgendaUnit.Application.DTO.AuthenticationManagerDto;
-using AgendaUnit.Domain.Models;
 using AgendaUnit.Infra;
 using AgendaUnit.Shared.Exceptions;
 using AgendaUnit.Web.Middlewares;
 using AutoMapper;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +58,20 @@ builder.Services.AddAuthentication(opt =>
         ValidIssuer = builder.Configuration["jwt:Issuer"],
         ValidAudience = builder.Configuration["jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+    };
+
+    opt.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Request.Cookies.TryGetValue("token", out var token);
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+
+            return Task.CompletedTask;
+        }
     };
 
 });
