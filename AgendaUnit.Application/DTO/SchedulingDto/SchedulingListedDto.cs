@@ -35,7 +35,7 @@ public class SchedulingListedDto
 
     public virtual CustomerDto Customer { get; set; }
 
-    public List<SchedulingService>? SchedulingServices { get; set; }
+    public List<SchedulingServiceDto>? SchedulingServices { get; set; }
 
     public virtual UserDto User { get; set; }
 
@@ -62,10 +62,9 @@ public class SchedulingListedDto
     }
 
 
-    [AutoMap(typeof(Scheduling), ReverseMap = true)]
-    class SchedulingServiceDto
+    [AutoMap(typeof(SchedulingService), ReverseMap = true)]
+    public class SchedulingServiceDto
     {
-        public int? Id { get; set; }
         public int? ServiceId { get; set; }
         public int? SchedulingId { get; set; }
 
