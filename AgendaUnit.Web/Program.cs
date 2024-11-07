@@ -60,19 +60,19 @@ builder.Services.AddAuthentication(opt =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
     };
 
-    opt.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            context.Request.Cookies.TryGetValue("token", out var token);
-            if (!string.IsNullOrEmpty(token))
-            {
-                context.Token = token;
-            }
+    /*    opt.Events = new JwtBearerEvents
+       {
+           OnMessageReceived = context =>
+           {
+               context.Request.Cookies.TryGetValue("token", out var token);
+               if (!string.IsNullOrEmpty(token))
+               {
+                   context.Token = token;
+               }
 
-            return Task.CompletedTask;
-        }
-    };
+               return Task.CompletedTask;
+           }
+       }; */
 
 });
 

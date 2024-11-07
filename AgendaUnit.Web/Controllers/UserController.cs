@@ -52,4 +52,13 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(GetbyId), new { id = userCreatedDto.Id }, userCreatedDto);
 
     }
+
+    [HttpGet]
+    [Authorize]
+    [Route("/me")]
+    async public Task<ActionResult> GetInfo()
+    {
+        return Ok(await _userAppService.GetInfo());
+
+    }
 }

@@ -269,19 +269,56 @@ namespace AgendaUnit.Infrastructure.Repositories
                 {
                     if (nestedProperty.PropertyType == typeof(string))
                     {
-                        query = query.Where(item => EF.Property<string>(item, nestedProperty.Name).Contains(nestedValue.ToString()));
+                        var stringValue = nestedValue.ToString();
+
+                        //attributes
+                        var stringEqualsAttribute = nestedProperty.GetCustomAttribute(typeof(StringEqualsAttribute));
+                        var caseInsensitiveAttribute = nestedProperty.GetCustomAttribute(typeof(CaseStringInsensitiveAttribute));
+
+                        // string equals
+                        if (stringEqualsAttribute != null)
+                        {
+                            query = query.Where(item =>
+                                    (caseInsensitiveAttribute != null
+                                          ? EF.Property<string>(item, nestedProperty.Name).ToLower() == stringValue.ToLower()
+                                          : EF.Property<string>(item, nestedProperty.Name) == stringValue));
+                        }
+                        else
+                        {
+                            // contains %Value%
+                            query = query.Where(item =>
+                                    (caseInsensitiveAttribute != null
+                                            ? EF.Property<string>(item, nestedProperty.Name).ToLower().Contains(stringValue.ToLower())
+                                            : EF.Property<string>(item, nestedProperty.Name).Contains(stringValue)));
+
+                        }
+
+                        continue;
                     }
                     if (nestedProperty.PropertyType == typeof(bool))
                     {
-                        query = query.Where(item => EF.Property<string>(item, nestedProperty.Name).Contains(nestedValue.ToString()));
+                        query = query.Where(item => EF.Property<bool>(item, nestedProperty.Name).Equals(nestedValue));
+                        continue;
                     }
-                    if (nestedProperty.PropertyType.IsValueType)
+                    if (nestedProperty.PropertyType.IsValueType && !nestedProperty.PropertyType.IsEnum && !nestedProperty.Name.Equals("StartDate") && !nestedProperty.Name.Equals("EndDate"))
                     {
-                        query = query.Where(item => EF.Property<string>(item, nestedProperty.Name).Contains(nestedValue.ToString()));
+                        if (nestedProperty.PropertyType.Name.Equals("DateTime"))
+                        {
+                            if ((DateTime)nestedValue != DateTime.MinValue)
+                            {
+                                query = query.Where(item => EF.Property<DateTime>(item, nestedProperty.Name).Date == ((DateTime)nestedValue).Date);
+                            }
+
+                            continue;
+                        }
+
+                        query = query.Where(item => EF.Property<object>(item, nestedProperty.Name).Equals(nestedValue));
+                        continue;
                     }
                     if (nestedProperty.PropertyType.IsClass && nestedProperty.PropertyType != typeof(string))
                     {
                         ApplyNestedPropertiesFilter(query, nestedValue, nestedProperty.Name);
+                        continue;
                     }
                 }
             }
@@ -289,10 +326,6 @@ namespace AgendaUnit.Infrastructure.Repositories
 
 
     }
-
-
-
-
 
 }
 

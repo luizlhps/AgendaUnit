@@ -33,7 +33,7 @@ public class SchedulingAppService : Crud<Scheduling>, ISchedulingAppService
         var userId = _common.UserId;
         var user = await _userAppService.GetById<UserObtainedDto>(userId);
 
-        schedulingListDto.CompanyId = user.CompanyId;
+        schedulingListDto.CompanyId = (int)user.CompanyId;
 
         var schedules = await GetAll<SchedulingListDto, SchedulingListedDto>(schedulingListDto);
 
@@ -45,7 +45,7 @@ public class SchedulingAppService : Crud<Scheduling>, ISchedulingAppService
         var userId = _common.UserId;
         var user = await _userAppService.GetById<UserObtainedDto>(userId);
 
-        schedulingListDto.CompanyId = user.CompanyId;
+        schedulingListDto.CompanyId = (int)user.CompanyId;
 
         var schedules = await GetAll<SchedulingListDto, SchedulingListedDto>(schedulingListDto);
 

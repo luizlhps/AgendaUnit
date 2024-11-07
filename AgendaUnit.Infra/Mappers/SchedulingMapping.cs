@@ -23,6 +23,12 @@ public class SchedulingMapping
         modelBuilder.Entity<Scheduling>().HasKey(s => s.Id);
 
         modelBuilder.Entity<Scheduling>()
+          .HasMany(s => s.SchedulingServices)
+          .WithOne(ss => ss.Scheduling)
+          .HasForeignKey(ss => ss.SchedulingId);
+
+
+        modelBuilder.Entity<Scheduling>()
             .HasOne(c => c.User)
             .WithMany(s => s.Schedulings)
             .HasForeignKey(s => s.StaffUserId);

@@ -9,4 +9,5 @@ public interface IUserAppService : ICrudAppService<User>
 {
 
     Task<UserCreatedDto> Register(UserCreateDto userCreateDto);
+    Task<UserObtainedDto> GetInfo();
 }

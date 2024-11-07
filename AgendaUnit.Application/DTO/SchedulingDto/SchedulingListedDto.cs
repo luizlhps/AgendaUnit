@@ -35,7 +35,7 @@ public class SchedulingListedDto
 
     public virtual CustomerDto Customer { get; set; }
 
-    public virtual ServiceDto Service { get; set; }
+    public List<SchedulingService>? SchedulingServices { get; set; }
 
     public virtual UserDto User { get; set; }
 
@@ -61,15 +61,21 @@ public class SchedulingListedDto
         public string Email { get; set; }
     }
 
-    [AutoMap(typeof(Service), ReverseMap = true)]
-    public class ServiceDto
+
+    [AutoMap(typeof(Scheduling), ReverseMap = true)]
+    class SchedulingServiceDto
     {
+        public int? Id { get; set; }
+        public int? ServiceId { get; set; }
+        public int? SchedulingId { get; set; }
 
         public string Name { get; set; }
+        public double? Price { get; set; }
+        public double? TotalPrice { get; set; }
+        public double? Discount { get; set; }
+        public bool? IsDeleted { get; set; }
 
-        public TimeSpan Duration { get; set; }
-
-        public decimal Price { get; set; }
+        //public virtual Service Service { get; set; }
     }
     [AutoMap(typeof(Status), ReverseMap = true)]
     public class StatusDto

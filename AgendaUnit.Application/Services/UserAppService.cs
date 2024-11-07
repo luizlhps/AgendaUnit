@@ -5,6 +5,7 @@ using AgendaUnit.Domain.Interfaces.Context;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
+using AgendaUnit.Shared.CrossCutting;
 using AgendaUnit.Shared.Exceptions;
 using AutoMapper;
 
@@ -12,8 +13,16 @@ namespace AgendaUnit.Application.Services;
 
 public class UserAppService : Crud<User>, IUserAppService
 {
-    public UserAppService(IUnitOfWork unitOfWork, IMapper mapper, IServiceProvider serviceProvider) : base(unitOfWork, mapper, serviceProvider)
+    readonly private ICommon _common;
+
+
+    public UserAppService(
+        IUnitOfWork unitOfWork
+        , IMapper mapper
+        , IServiceProvider serviceProvider
+        , ICommon common) : base(unitOfWork, mapper, serviceProvider)
     {
+        _common = common;
     }
 
     async public Task<UserCreatedDto> Register(UserCreateDto userCreateDto)
@@ -22,7 +31,15 @@ public class UserAppService : Crud<User>, IUserAppService
         userCreateDto.RoleId = (int)RoleEnum.Admin;
 
         return await Create<UserCreateDto, UserCreatedDto>(userCreateDto);
+    }
+
+    async public Task<UserObtainedDto> GetInfo()
+    {
+        var userId = _common.UserId;
+
+        return await GetById<UserObtainedDto>(userId);
 
     }
+
 
 }
