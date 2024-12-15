@@ -31,7 +31,7 @@ public static class ApiExceptionsMiddlewaresExtensions
                     response = new
                     {
                         StatusCode = context.Response.StatusCode,
-                        Message = "Ocorreu um errointerno no servidor.",
+                        Message = "Ocorreu um erro interno no servidor.",
                         Name = exception.GetType().Name,
                         StackTrace = environment.IsDevelopment() ? exception.StackTrace : null
                     };

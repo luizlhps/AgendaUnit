@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using AgendaUnit.Domain.Models;
-using AgendaUnit.Domain.Models;
 using AgendaUnit.Infra.Mappers;
 
 namespace AgendaUnit.Infra.Context;
@@ -49,7 +48,6 @@ public class AppDbContext : DbContext
 
         base.OnModelCreating(modelBuilder);
 
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
@@ -59,6 +57,10 @@ public class AppDbContext : DbContext
             {
                 property.SetColumnName(property.GetColumnName().ToLower());
 
+                if (property.Name == "Timestamp" && property.ClrType == typeof(DateTimeOffset))
+                {
+                    property.SetDefaultValueSql("CURRENT_TIMESTAMP");
+                }
             }
 
             foreach (var key in entity.GetKeys())

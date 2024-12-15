@@ -71,7 +71,11 @@ public static class DependencyInjection
         string connectionString = configuration["ConnectionStrings:PostSqlDBConnection"];
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString).EnableSensitiveDataLogging().UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); })))
+        {
+            options.UseNpgsql(connectionString)
+                .EnableSensitiveDataLogging()
+                .UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); }));
+        })
             ;
 
         return services;
