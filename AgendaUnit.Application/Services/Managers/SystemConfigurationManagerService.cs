@@ -235,7 +235,7 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
             SchedulingId = scheduling.Id,
             Name = service.Name,
             Price = schedulingServices.Price,
-            TotalPrice = schedulingServices.Price,
+            TotalPrice = schedulingServices.Price - schedulingServices.Discount,
             Discount = schedulingServices.Discount
         };
 

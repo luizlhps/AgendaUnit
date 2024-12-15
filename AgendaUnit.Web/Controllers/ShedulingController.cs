@@ -24,7 +24,6 @@ public class SchedulingController : ControllerBase
     async public Task<ActionResult> GetAll([FromQuery] SchedulingListDto schedulingListDto)
     {
         return Ok(await _schedulingAppService.GetAllSchedulesByCompany(schedulingListDto));
-
     }
 
 }

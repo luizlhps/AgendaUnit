@@ -30,6 +30,36 @@ public class UserAppService : Crud<User>, IUserAppService
         userCreateDto.Password = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password);
         userCreateDto.RoleId = (int)RoleEnum.Admin;
 
+        #region Verifiy already exists
+
+        var emailUserListDto = new UserListDto
+        {
+            Email = userCreateDto.Email.ToLower()
+        };
+
+        var emailUserListedDto = await GetAll<UserListDto, UserListedDto>(emailUserListDto);
+        var emailAlreadyExists = emailUserListedDto.Items.FirstOrDefault();
+
+        if (emailAlreadyExists != null)
+        {
+            throw new ConflictException("Já existe um usuário com esse email");
+        }
+
+
+        var usernameUserListDto = new UserListDto
+        {
+            Username = userCreateDto.Username.ToLower()
+        };
+
+        var usernameUserListedDto = await GetAll<UserListDto, UserListedDto>(usernameUserListDto);
+        var usernameAlreadyExists = usernameUserListedDto.Items.FirstOrDefault();
+
+        if (usernameAlreadyExists != null)
+        {
+            throw new ConflictException("Já existe um usuário com esse login");
+        }
+        #endregion
+
         return await Create<UserCreateDto, UserCreatedDto>(userCreateDto);
     }
 

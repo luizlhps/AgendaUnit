@@ -74,7 +74,6 @@ public class SchedulingListedDto
         public double? Discount { get; set; }
         public bool? IsDeleted { get; set; }
 
-        //public virtual Service Service { get; set; }
     }
     [AutoMap(typeof(Status), ReverseMap = true)]
     public class StatusDto

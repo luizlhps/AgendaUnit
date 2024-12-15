@@ -46,7 +46,8 @@ namespace AgendaUnit.Infra.Migrations
 
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamptz")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("TypeCompany")
                         .IsRequired()
@@ -96,8 +97,10 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("phone");
 
                     b.Property<DateTimeOffset>("Timestamp")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id")
                         .HasName("pk_customer");
@@ -127,8 +130,10 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("name");
 
                     b.Property<DateTimeOffset>("Timestamp")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id")
                         .HasName("pk_role");
@@ -186,7 +191,8 @@ namespace AgendaUnit.Infra.Migrations
 
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamptz")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<decimal?>("TotalPrice")
                         .HasColumnType("numeric")
@@ -290,8 +296,10 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("status_id");
 
                     b.Property<DateTimeOffset>("Timestamp")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id")
                         .HasName("pk_service");
@@ -324,8 +332,10 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("name");
 
                     b.Property<DateTimeOffset>("Timestamp")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id")
                         .HasName("pk_status");
@@ -371,7 +381,7 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("phone");
 
                     b.Property<DateTime?>("RecoveryExpiryTime")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("recovery_expiry_time");
 
                     b.Property<string>("RecoveryToken")
@@ -383,7 +393,7 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("refresh_token");
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("refresh_token_expiry_time");
 
                     b.Property<int>("RoleId")
@@ -391,8 +401,10 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("role_id");
 
                     b.Property<DateTimeOffset>("Timestamp")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("timestamp");
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Username")
                         .IsRequired()

@@ -1,4 +1,5 @@
 
+using System.Linq.Expressions;
 using System.Reflection;
 using AgendaUnit.Domain.Interfaces.Repositories;
 using AgendaUnit.Domain.Models;
@@ -27,7 +28,6 @@ namespace AgendaUnit.Infrastructure.Repositories
         {
             return await _appDbContext.Set<TEntity>().FindAsync(id);
         }
-
 
         public async virtual Task<TEntity> Create(TEntity entity)
         {
@@ -66,6 +66,13 @@ namespace AgendaUnit.Infrastructure.Repositories
         where TInputDto : QueryParams
         where TOutputDto : class
         {
+            var baseProperties = typeof(TInputDto).BaseType.GetProperties();
+
+            var allProperties = typeof(TInputDto).GetProperties();
+
+            var dtoProperties = allProperties
+            .Where(dtoProperties => !baseProperties.Any(baseProperties => baseProperties.Name == dtoProperties.Name));
+
 
             var pageResult = new PageResult<TOutputDto>
             {
@@ -75,26 +82,24 @@ namespace AgendaUnit.Infrastructure.Repositories
                 TotalCount = 0
             };
 
+
             IQueryable<TEntity> query = _appDbContext.Set<TEntity>();
 
             if (inputDto.Filters != null)
             {
                 #region apply filter date of timestamp
+
                 if (inputDto.Filters.StartDate.HasValue && inputDto.Filters.EndDate.HasValue)
                 {
                     query = query.Where(item => EF.Property<DateTime>(item, "timestamp") >= inputDto.Filters.StartDate.Value
                                              && EF.Property<DateTime>(item, "timestamp") <= inputDto.Filters.EndDate.Value);
                 }
+
                 #endregion
 
             }
 
             #region apply filter search terms
-            var baseProperties = typeof(TInputDto).BaseType.GetProperties();
-
-            var dtoProperties = typeof(TInputDto).GetProperties()
-            .Where(dtoProperties => !baseProperties.Any(baseProperties => baseProperties.Name == dtoProperties.Name));
-
 
             var dateRangeProperty = dtoProperties.FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(DateRangeAttribute)));
 
@@ -117,11 +122,8 @@ namespace AgendaUnit.Infrastructure.Repositories
                         EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) <= (DateTime)endValue);
 
                     }
-
                 }
             }
-
-
 
 
             foreach (var property in dtoProperties)
@@ -130,6 +132,8 @@ namespace AgendaUnit.Infrastructure.Repositories
 
                 if (value != null)
                 {
+
+                    //STRING VALUES
                     if (property.PropertyType == typeof(string))
                     {
                         var stringValue = value.ToString();
@@ -158,11 +162,15 @@ namespace AgendaUnit.Infrastructure.Repositories
 
                         continue;
                     }
+
+                    //BOOLEAN VALUES
                     if (property.PropertyType == typeof(bool))
                     {
                         query = query.Where(item => EF.Property<bool>(item, property.Name).Equals(value));
                         continue;
                     }
+
+                    //DATE VALUES
                     if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum && !property.Name.Equals("StartDate") && !property.Name.Equals("EndDate"))
                     {
                         if (property.PropertyType.Name.Equals("DateTime"))
@@ -178,6 +186,8 @@ namespace AgendaUnit.Infrastructure.Repositories
                         query = query.Where(item => EF.Property<object>(item, property.Name).Equals(value));
                         continue;
                     }
+
+                    //CLASS NESTED
                     if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
                     {
                         ApplyNestedPropertiesFilter(query, value, property.Name);
@@ -211,6 +221,41 @@ namespace AgendaUnit.Infrastructure.Repositories
             #endregion
 
 
+            //TODO: make sorting by using attributes 
+            #region Sorting
+
+            //ApplySorting(query)
+
+            BuildSortingPaths(typeof(TInputDto));
+
+            foreach (var property in allProperties)
+            {
+                var attribute = (SortableAttribute)Attribute.GetCustomAttribute(property, typeof(SortableAttribute));
+
+                //CLASS NESTED
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                {
+                    // ApplySortingNested(query, value, property.Name);
+                    continue;
+                }
+                else
+                {
+
+                    if (attribute != null)
+                    {
+                        query = attribute.IsDescending
+                        ? query.OrderByDescending(item => EF.Property<object>(item, property.Name))
+                        : query.OrderBy(item => EF.Property<object>(item, property.Name));
+
+                    }
+
+                    continue;
+                }
+            }
+
+            #endregion
+
+
             #endregion
 
             #region apply pagination
@@ -240,7 +285,7 @@ namespace AgendaUnit.Infrastructure.Repositories
                     pageNumber = totalPages - 1;
                 }
 
-                var items = await query.ProjectTo<TOutputDto>(_mapper.ConfigurationProvider).Skip(pageNumber).Take(pageSize).ToListAsync();
+                var items = await query.ProjectTo<TOutputDto>(_mapper.ConfigurationProvider).Skip(pageNumber * pageSize).Take(pageSize).ToListAsync();
 
                 pageResult = new PageResult<TOutputDto>
                 {
@@ -257,6 +302,7 @@ namespace AgendaUnit.Infrastructure.Repositories
 
             return pageResult;
         }
+
         private void ApplyNestedPropertiesFilter<TEntity>(IQueryable<TEntity> query, object nestedObject, string parentPropertyName)
         {
             var nestedProperties = nestedObject.GetType().GetProperties();
@@ -324,9 +370,80 @@ namespace AgendaUnit.Infrastructure.Repositories
             }
         }
 
+        public static IQueryable<T> ApplySorting<T>(IQueryable<T> query, string propertyPath, bool ascending = true)
+        {
+            var param = Expression.Parameter(typeof(T), "x");
+            Expression property = param;
 
+            // Navega pelas propriedades aninhadas
+            foreach (var prop in propertyPath.Split('.'))
+            {
+                property = Expression.Property(property, prop);
+            }
+
+            // Cria a expressão lambda
+            var lambda = Expression.Lambda(property, param);
+
+            // Determina o método de ordenação
+            var methodName = ascending ? "OrderBy" : "OrderByDescending";
+
+            // Invoca o método OrderBy ou OrderByDescending
+            var result = typeof(Queryable).GetMethods()
+                .First(method => method.Name == methodName && method.GetParameters().Length == 2)
+                .MakeGenericMethod(typeof(T), property.Type)
+                .Invoke(null, new object[] { query, lambda });
+
+            return (IQueryable<T>)result;
+        }
+
+        public static List<string> BuildSortingPaths(Type type, string parentPath = "")
+        {
+            var sortingPaths = new List<string>();  // Lista para armazenar os caminhos de ordenação
+
+            // Verifique se o tipo é válido
+            if (type == null)
+            {
+                Console.WriteLine("O tipo passado é nulo!");
+                return sortingPaths; // Retorna uma lista vazia
+            }
+
+            Console.WriteLine($"Processando o tipo: {type.Name}");
+
+            var properties = type.GetProperties();
+
+            if (properties.Length == 0)
+            {
+                Console.WriteLine("Não há propriedades para processar.");
+            }
+
+            foreach (var property in properties)
+            {
+                // Mostra a propriedade sendo processada
+                Console.WriteLine($"Processando a propriedade: {property.Name}");
+
+                var propertyPath = string.IsNullOrEmpty(parentPath)
+                    ? property.Name
+                    : $"{parentPath}.{property.Name}";
+
+                // Verifica se a propriedade possui o atributo de sorting
+                var sortAttribute = property.GetCustomAttribute<SortableAttribute>();
+                if (sortAttribute != null)
+                {
+                    Console.WriteLine($"Propriedade ordenável encontrada: {propertyPath}");
+                    sortingPaths.Add(propertyPath); // Adiciona o caminho à lista
+                }
+
+                // Se for uma classe complexa (e não string), busca recursivamente
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                {
+                    Console.WriteLine($"Propriedade {property.Name} é uma classe. Descendo recursivamente...");
+                    sortingPaths.AddRange(BuildSortingPaths(property.PropertyType, propertyPath)); // Adiciona os caminhos encontrados recursivamente
+                }
+            }
+
+            return sortingPaths; // Retorna a lista com todos os caminhos de ordenação
+        }
     }
-
 }
 
 

@@ -34,11 +34,12 @@ public class SchedulingListDto : QueryParams
     //public virtual Status Status { get; set; }
     // virtual Company Company { get; set; }
     //public virtual Customer Customer { get; set; }
-    public List<SchedulingService>? SchedulingServices { get; set; }
+    public List<SchedulingServiceDto>? SchedulingServices { get; set; }
 
     [AutoMap(typeof(Scheduling), ReverseMap = true)]
-    class SchedulingServiceDto
+    public class SchedulingServiceDto
     {
+        [Sortable]
         public int? Id { get; set; }
         public int? ServiceId { get; set; }
         public int? SchedulingId { get; set; }
