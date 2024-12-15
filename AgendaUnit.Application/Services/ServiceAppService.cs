@@ -1,3 +1,4 @@
+using System.Xml;
 using AgendaUnit.Application.DTO;
 using AgendaUnit.Application.DTO.ServiceDto;
 using AgendaUnit.Application.DTO.UserDto;
@@ -28,10 +29,15 @@ public class ServiceAppService : Crud<Service>, IServiceAppService
 
     public async Task<ServiceByCompanyCreatedDto> CreateByCompany(ServiceByCompanyCreateDto serviceByCompanyCreateDto)
     {
+
+        #region Convert Timespan
+        var duration = XmlConvert.ToTimeSpan(serviceByCompanyCreateDto.Duration);
+        #endregion
+
         var serviceCreateDto = new ServiceCreateDto
         {
             CompanyId = _common.CompanyId.Value,
-            Duration = serviceByCompanyCreateDto.Duration,
+            Duration = duration,
             Name = serviceByCompanyCreateDto.Name,
             Price = serviceByCompanyCreateDto.Price,
             StatusId = (int)StatusEnum.Active
