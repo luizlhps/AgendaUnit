@@ -4,7 +4,7 @@ namespace AgendaUnit.Application.DTO.SchedulingDto;
 public class SchedulingDto
 {
     public int Id { get; set; }
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
     public TimeSpan Duration { get; set; }
     public string Notes { get; set; }
 
@@ -13,7 +13,7 @@ public class SchedulingDto
 
     public string? CancelNote { get; set; }
 
-    public decimal? TotalPrice { get; set; }
+    public double? TotalPrice { get; set; }
 
     public int StaffUserId { get; set; }
     public User StaffUser { get; set; }

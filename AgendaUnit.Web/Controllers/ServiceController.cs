@@ -50,4 +50,15 @@ public class ServiceController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = serviceByCompanyCreatedDto.Id }, serviceByCompanyCreatedDto);
     }
 
+
+    [Authorize]
+    [HttpPut("{id}")]
+    async public Task<ActionResult> Update(int id, [FromBody] ServiceByCompanyUpdateDto serviceByCompanyUpdateDto)
+    {
+        serviceByCompanyUpdateDto.Id = id;
+        var serviceByCompanyUpdatedDto = await _serviceAppService.UpdateByCompany(serviceByCompanyUpdateDto);
+
+        return Ok(serviceByCompanyUpdatedDto);
+    }
+
 }

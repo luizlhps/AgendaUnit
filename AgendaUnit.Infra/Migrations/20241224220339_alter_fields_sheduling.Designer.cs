@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241214162907_populate")]
-    partial class populate
+    [Migration("20241224220339_alter_fields_sheduling")]
+    partial class alter_fields_sheduling
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,9 @@ namespace AgendaUnit.Infra.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bool")
+                        .HasDefaultValue(true)
                         .HasColumnName("isdeleted");
 
                     b.Property<string>("Name")
@@ -165,19 +167,24 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("int4")
                         .HasColumnName("customer_id");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTimeOffset>("Date")
                         .HasColumnType("timestamptz")
                         .HasColumnName("date");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("double precision")
+                        .HasColumnName("discount");
 
                     b.Property<TimeSpan>("Duration")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(6)
                         .HasColumnType("interval")
-                        .HasColumnName("duration")
-                        .HasDefaultValueSql("'00:00:00'");
+                        .HasColumnName("duration");
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bool")
+                        .HasDefaultValue(false)
                         .HasColumnName("isdeleted");
 
                     b.Property<string>("Notes")
@@ -197,8 +204,8 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnName("timestamp")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("numeric")
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double precision")
                         .HasColumnName("total_price");
 
                     b.HasKey("Id")
@@ -230,12 +237,14 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("service_id");
 
-                    b.Property<double>("Discount")
-                        .HasColumnType("double precision")
-                        .HasColumnName("discount");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval")
+                        .HasColumnName("duration");
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bool")
+                        .HasDefaultValue(true)
                         .HasColumnName("isdeleted");
 
                     b.Property<string>("Name")
@@ -246,10 +255,6 @@ namespace AgendaUnit.Infra.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double precision")
                         .HasColumnName("price");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("double precision")
-                        .HasColumnName("total_price");
 
                     b.HasKey("SchedulingId", "ServiceId")
                         .HasName("pk_scheduling_service");
@@ -290,8 +295,8 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision")
                         .HasColumnName("price");
 
                     b.Property<int>("StatusId")
@@ -383,8 +388,8 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone");
 
-                    b.Property<DateTime?>("RecoveryExpiryTime")
-                        .HasColumnType("timestamp without time zone")
+                    b.Property<DateTimeOffset?>("RecoveryExpiryTime")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("recovery_expiry_time");
 
                     b.Property<string>("RecoveryToken")
@@ -395,8 +400,8 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("text")
                         .HasColumnName("refresh_token");
 
-                    b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("timestamp without time zone")
+                    b.Property<DateTimeOffset?>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("refresh_token_expiry_time");
 
                     b.Property<int>("RoleId")

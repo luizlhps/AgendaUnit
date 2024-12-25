@@ -22,7 +22,7 @@ namespace AgendaUnit.Application.DTO.SystemConfigurationManager
         [AutoMap(typeof(Scheduling), ReverseMap = true)]
         public class SchedulingDto
         {
-            public DateTime Date { get; set; }
+            public DateTimeOffset Date { get; set; }
             public string Duration { get; set; } // ISO 8601 format
             public virtual SchedulingServiceDto SchedulingServices { get; set; } // Alterado para List
 

@@ -229,17 +229,17 @@ public class SystemConfigurationManagerService : ISystemConfigurationManagerServ
 
         var schedulingCreatedDto = await _schedulingAppService.Create<Scheduling, SchedulingCreatedDto>(scheduling);
 
-        var schedulingService = new Domain.Models.SchedulingService
-        {
-            ServiceId = service.Id,
-            SchedulingId = scheduling.Id,
-            Name = service.Name,
-            Price = schedulingServices.Price,
-            TotalPrice = schedulingServices.Price - schedulingServices.Discount,
-            Discount = schedulingServices.Discount
-        };
+        /*       var schedulingService = new Domain.Models.SchedulingService
+              {
+                  ServiceId = service.Id,
+                  SchedulingId = scheduling.Id,
+                  Name = service.Name,
+                  Price = schedulingServices.Price,
+                  TotalPrice = schedulingServices.Price - schedulingServices.Discount,
+                  Discount = schedulingServices.Discount
+              };
 
-        scheduling.SchedulingServices.Add(schedulingService);
+              scheduling.SchedulingServices.Add(schedulingService); */
 
         await __unitOfWork.Commit();
 

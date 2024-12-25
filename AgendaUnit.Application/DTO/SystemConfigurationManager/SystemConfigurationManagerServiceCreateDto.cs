@@ -7,6 +7,6 @@ public class SystemConfigurationManagerServiceCreateDto
 {
     public string Name { get; set; }
     public string Duration { get; set; } //fake because we receive iso8601 format
-    public decimal Price { get; set; }
+    public double Price { get; set; }
 }
 

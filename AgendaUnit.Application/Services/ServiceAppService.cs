@@ -58,5 +58,21 @@ public class ServiceAppService : Crud<Service>, IServiceAppService
         return servicesListedDto;
     }
 
+    public async Task<ServiceByCompanyUpdatedDto> UpdateByCompany(ServiceByCompanyUpdateDto serviceByCompanyUpdateDto)
+    {
+        #region Convert Timespan
+        var duration = XmlConvert.ToTimeSpan(serviceByCompanyUpdateDto.Duration);
+        #endregion
 
+        var serviceUpdateDto = new ServiceUpdateDto
+        {
+            Id = serviceByCompanyUpdateDto.Id,
+            CompanyId = _common.CompanyId.Value,
+            Duration = duration,
+            Name = serviceByCompanyUpdateDto.Name,
+            Price = serviceByCompanyUpdateDto.Price,
+        };
+
+        return await Update<ServiceUpdateDto, ServiceByCompanyUpdatedDto>(serviceUpdateDto);
+    }
 }

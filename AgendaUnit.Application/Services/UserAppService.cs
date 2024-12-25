@@ -7,6 +7,7 @@ using AgendaUnit.Domain.Models;
 using AgendaUnit.Domain.Services;
 using AgendaUnit.Shared.CrossCutting;
 using AgendaUnit.Shared.Exceptions;
+using AgendaUnit.Shared.Queries;
 using AutoMapper;
 
 namespace AgendaUnit.Application.Services;
@@ -63,6 +64,7 @@ public class UserAppService : Crud<User>, IUserAppService
         return await Create<UserCreateDto, UserCreatedDto>(userCreateDto);
     }
 
+
     async public Task<UserObtainedDto> GetInfo()
     {
         var userId = _common.UserId;
@@ -71,5 +73,25 @@ public class UserAppService : Crud<User>, IUserAppService
 
     }
 
+    async public Task<PageResult<UserByCompanyListedDto>> GetAllByCompany(UserByCompanyListDto userByCompanyListDto)
+    {
+
+        UserListDto userListDto = new UserListDto
+        {
+            Email = userByCompanyListDto.Email,
+            Filters = userByCompanyListDto.Filters,
+            Name = userByCompanyListDto.Name,
+            Username = userByCompanyListDto.Username,
+            PaginationProperties = userByCompanyListDto.PaginationProperties,
+            Company = new UserListDto.CompanyDto
+            {
+                Id = _common.CompanyId
+            }
+
+        };
+
+
+        return await GetAll<UserListDto, UserByCompanyListedDto>(userListDto);
+    }
 
 }

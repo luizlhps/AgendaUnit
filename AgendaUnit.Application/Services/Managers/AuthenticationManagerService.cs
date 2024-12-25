@@ -72,17 +72,17 @@ public class AuthenticationManagerService : IAuthenticationManagerService
         {
             Id = user.Id,
             RefreshToken = refreshToken,
-            RefreshTokenExpiryTime = DateTime.Now.AddDays(7),
+            RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(7),
         };
 
-        var userUpdatedDto = await _userAppService.Update<UserRefreshTokenUpdateDto, UserUpdatedDto>(userUpdateDto);
+        await _userAppService.Update<UserRefreshTokenUpdateDto, UserUpdatedDto>(userUpdateDto);
 
         #endregion
 
         var loginResponseDto = new LoginResponseDto
         {
             Token = token,
-            Expires = DateTime.Now.AddHours(1),
+            Expires = DateTimeOffset.UtcNow.AddHours(1),
             RefreshToken = refreshToken,
         };
 
@@ -99,7 +99,7 @@ public class AuthenticationManagerService : IAuthenticationManagerService
             throw new UnauthorizedException("Usuário não encontrado.");
         }
 
-        if (userToken.RefreshToken != userObtained.RefreshToken | userObtained.RefreshTokenExpiryTime < DateTime.Now)
+        if (userToken.RefreshToken != userObtained.RefreshToken | userObtained.RefreshTokenExpiryTime < DateTimeOffset.UtcNow)
         {
             throw new UnauthorizedException("RefreshToken inválido.");
         }
@@ -111,7 +111,7 @@ public class AuthenticationManagerService : IAuthenticationManagerService
         {
             Id = userObtained.Id,
             RefreshToken = refreshToken,
-            RefreshTokenExpiryTime = DateTime.Now.AddDays(7),
+            RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(7),
         };
 
         var userUpdatedDto = await _userAppService.Update<UserRefreshTokenUpdateDto, UserUpdatedDto>(userUpdateDto);
@@ -119,7 +119,7 @@ public class AuthenticationManagerService : IAuthenticationManagerService
         return new LoginResponseDto
         {
             Token = token,
-            Expires = DateTime.Now.AddHours(1),
+            Expires = DateTimeOffset.UtcNow.AddHours(1),
             RefreshToken = refreshToken,
         };
 

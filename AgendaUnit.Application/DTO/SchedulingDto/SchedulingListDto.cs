@@ -18,17 +18,17 @@ public class SchedulingListDto : QueryParams
     public DateTime? Date { get; set; }
 
     [DateRange(nameof(SchedulingListDto.Date))]
-    public DateTime? StartDate { get; set; }
+    public DateTimeOffset? StartDate { get; set; }
 
 
     [DateRange(nameof(SchedulingListDto.Date))]
-    public DateTime? EndDate { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
 
 
     public string? Notes { get; set; }
     public TimeSpan? Duration { get; set; }
     public string? CancelNote { get; set; }
-    public decimal? TotalPrice { get; set; }
+    public double? TotalPrice { get; set; }
     public bool? IsDeleted { get; set; }
 
     //public virtual Status Status { get; set; }

@@ -91,8 +91,8 @@ namespace AgendaUnit.Infrastructure.Repositories
 
                 if (inputDto.Filters.StartDate.HasValue && inputDto.Filters.EndDate.HasValue)
                 {
-                    query = query.Where(item => EF.Property<DateTime>(item, "timestamp") >= inputDto.Filters.StartDate.Value
-                                             && EF.Property<DateTime>(item, "timestamp") <= inputDto.Filters.EndDate.Value);
+                    query = query.Where(item => EF.Property<DateTimeOffset>(item, "timestamp") >= inputDto.Filters.StartDate.Value
+                                             && EF.Property<DateTimeOffset>(item, "timestamp") <= inputDto.Filters.EndDate.Value);
                 }
 
                 #endregion
@@ -117,9 +117,22 @@ namespace AgendaUnit.Infrastructure.Repositories
 
                     if (startValue != null && endValue != null)
                     {
+
+                        if (endValue is DateTimeOffset endDateTimeOffset)
+                        {
+                            endDateTimeOffset = endDateTimeOffset.ToUniversalTime();
+                            endValue = endDateTimeOffset;
+                        }
+
+                        if (startValue is DateTimeOffset startDateTimeOffset)
+                        {
+                            startDateTimeOffset = startDateTimeOffset.ToUniversalTime();
+                            startValue = startDateTimeOffset;
+                        }
+
                         query = query.Where(item =>
-                        EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) >= (DateTime)startValue &&
-                        EF.Property<DateTime>(item, dateRangeValue.ReferencedProperty) <= (DateTime)endValue);
+                        EF.Property<DateTimeOffset>(item, dateRangeValue.ReferencedProperty) >= (DateTimeOffset)startValue &&
+                        EF.Property<DateTimeOffset>(item, dateRangeValue.ReferencedProperty) <= (DateTimeOffset)endValue);
 
                     }
                 }
@@ -173,11 +186,11 @@ namespace AgendaUnit.Infrastructure.Repositories
                     //DATE VALUES
                     if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum && !property.Name.Equals("StartDate") && !property.Name.Equals("EndDate"))
                     {
-                        if (property.PropertyType.Name.Equals("DateTime"))
+                        if (property.PropertyType.Name.Equals("DateTimeOffset"))
                         {
-                            if ((DateTime)value != DateTime.MinValue)
+                            if ((DateTimeOffset)value != DateTimeOffset.MinValue)
                             {
-                                query = query.Where(item => EF.Property<DateTime>(item, property.Name).Date == ((DateTime)value).Date);
+                                query = query.Where(item => EF.Property<DateTimeOffset>(item, property.Name).Date == ((DateTimeOffset)value).Date);
                             }
 
                             continue;
@@ -348,11 +361,11 @@ namespace AgendaUnit.Infrastructure.Repositories
                     }
                     if (nestedProperty.PropertyType.IsValueType && !nestedProperty.PropertyType.IsEnum && !nestedProperty.Name.Equals("StartDate") && !nestedProperty.Name.Equals("EndDate"))
                     {
-                        if (nestedProperty.PropertyType.Name.Equals("DateTime"))
+                        if (nestedProperty.PropertyType.Name.Equals("DateTimeOffset"))
                         {
-                            if ((DateTime)nestedValue != DateTime.MinValue)
+                            if ((DateTimeOffset)nestedValue != DateTimeOffset.MinValue)
                             {
-                                query = query.Where(item => EF.Property<DateTime>(item, nestedProperty.Name).Date == ((DateTime)nestedValue).Date);
+                                query = query.Where(item => EF.Property<DateTimeOffset>(item, nestedProperty.Name).Date == ((DateTimeOffset)nestedValue).Date);
                             }
 
                             continue;

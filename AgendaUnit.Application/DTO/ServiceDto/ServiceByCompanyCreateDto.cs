@@ -12,5 +12,5 @@ public class ServiceByCompanyCreateDto
 
     public string Duration { get; set; } // ISO 8601 format
 
-    public decimal Price { get; set; }
+    public double Price { get; set; }
 }

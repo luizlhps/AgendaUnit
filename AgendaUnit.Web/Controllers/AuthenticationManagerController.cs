@@ -46,7 +46,7 @@ public class AuthenticationManagerController : ControllerBase
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
-            Expires = DateTime.Now.AddHours(1),
+            Expires = DateTimeOffset.UtcNow.AddHours(1),
             Secure = false
         };
 
@@ -55,7 +55,7 @@ public class AuthenticationManagerController : ControllerBase
         Response.Cookies.Append("token", loginResponseDto.Token, cookieOptions);
 
 
-        cookieOptions.Expires = DateTime.Now.AddDays(7);
+        cookieOptions.Expires = DateTimeOffset.UtcNow.AddDays(7);
         Response.Cookies.Append("refresh_token", loginResponseDto.Token, cookieOptions);
 
         return Ok(loginResponseDto);

@@ -10,4 +10,5 @@ public interface IServiceAppService : ICrudAppService<Service>
 {
     Task<PageResult<ServiceListedDto>> GetAllByCompany(ServiceListDto serviceListDto);
     Task<ServiceByCompanyCreatedDto> CreateByCompany(ServiceByCompanyCreateDto serviceByCompanyCreateDto);
+    Task<ServiceByCompanyUpdatedDto> UpdateByCompany(ServiceByCompanyUpdateDto serviceByCompanyUpdateDto);
 }

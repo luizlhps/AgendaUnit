@@ -10,7 +10,7 @@ public abstract class BaseEntity : IBaseEntity
     public int Id { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
 
     [DefaultValue(false)]
     public bool IsDeleted { get; set; }

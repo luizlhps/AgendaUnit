@@ -10,5 +10,6 @@ namespace AgendaUnit.Application.Interfaces.Services;
 public interface ISchedulingAppService : ICrudAppService<Scheduling>
 {
     Task<PageResult<SchedulingListedDto>> GetAllSchedulesByCompany(SchedulingListDto schedulingListDto);
+    Task<SchedulingByCompanyCreatedDto> CreateByCompany(SchedulingByCompanyCreateDto schedulingByCompanyCreateDto);
 
 }

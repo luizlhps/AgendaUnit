@@ -16,10 +16,9 @@ public class SchedulingServiceMapping
 
         modelBuilder.Entity<SchedulingService>().Property(x => x.Name).HasColumnName(@"name").IsRequired();
         modelBuilder.Entity<SchedulingService>().Property(x => x.Price).HasColumnName(@"price").IsRequired();
-        modelBuilder.Entity<SchedulingService>().Property(x => x.TotalPrice).HasColumnName(@"total_price").IsRequired();
-        modelBuilder.Entity<SchedulingService>().Property(x => x.Discount).HasColumnName(@"discount").IsRequired();
+        modelBuilder.Entity<SchedulingService>().Property(x => x.Duration).HasColumnName(@"duration").HasColumnType(@"interval").IsRequired();
 
-        modelBuilder.Entity<SchedulingService>().Property(x => x.IsDeleted).HasColumnName(@"isdeleted").HasColumnType(@"bool").IsRequired();
+        modelBuilder.Entity<SchedulingService>().Property(x => x.IsDeleted).HasColumnName(@"isdeleted").HasColumnType(@"bool").HasDefaultValue(true).IsRequired();
 
         modelBuilder.Entity<SchedulingService>().HasQueryFilter(p => !p.IsDeleted);
 

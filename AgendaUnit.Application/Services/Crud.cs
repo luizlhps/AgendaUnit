@@ -54,8 +54,6 @@ namespace AgendaUnit.Domain.Services
             return createdEntity;
         }
 
-
-
         async public Task<TOutputDto> Delete<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
             where TInputDto : class
             where TOutputDto : class
@@ -81,7 +79,6 @@ namespace AgendaUnit.Domain.Services
             return await _unitOfWork.BaseRepository<TEntity>().GetAll<TInputDto, TOutputDto>(inputDto);
         }
 
-
         async public Task<TOutputDto> GetById<TOutputDto>(int id)
             where TOutputDto : class
         {
@@ -89,7 +86,6 @@ namespace AgendaUnit.Domain.Services
 
             return _mapper.Map<TOutputDto>(entity);
         }
-
 
         async public Task<TOutputDto> Update<TInputDto, TOutputDto>(TInputDto inputDto, Boolean? isTransaction = null)
              where TInputDto : class
@@ -115,6 +111,14 @@ namespace AgendaUnit.Domain.Services
                 modelState.AddModelError("Id", "Id não do tipo int");
 
                 throw new BadRequestException(modelState, "Id não do tipo int");
+            }
+
+            if (idValue.Equals(0))
+            {
+                var modelState = new ModelStateDictionary();
+                modelState.AddModelError("Id", "O valor do id não pode ser zero");
+
+                throw new BadRequestException(modelState, "O valor do id não pode ser zero");
             }
 
             var existingEntity = await _unitOfWork.BaseRepository<TEntity>().GetById(id);

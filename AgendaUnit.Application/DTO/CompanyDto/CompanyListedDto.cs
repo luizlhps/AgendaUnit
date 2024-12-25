@@ -28,7 +28,7 @@ public class CompanyListedDto
 
         public string Duration { get; set; }
 
-        public decimal Price { get; set; }
+        public double Price { get; set; }
 
         public bool Ativo { get; set; }
 
@@ -51,7 +51,7 @@ public class CompanyListedDto
     [AutoMap(typeof(Scheduling), ReverseMap = true)]
     public class SchedulingDto
     {
-        public DateTime Date { get; set; }
+        public DateTimeOffset Date { get; set; }
 
         public TimeSpan Duration { get; set; }
 
@@ -61,7 +61,7 @@ public class CompanyListedDto
 
         public string? CancelNote { get; set; }
 
-        public decimal? TotalPrice { get; set; }
+        public double? TotalPrice { get; set; }
 
         public int StaffUserId { get; set; }
 

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AgendaUnit.Web.Controllers;
 
 [ApiController]
-[Route("users")]
+[Route("user")]
 public class UserController : ControllerBase
 {
     private readonly IUserAppService _userAppService;
@@ -32,12 +32,13 @@ public class UserController : ControllerBase
     {
         return Ok(await _userAppService.GetById<UserObtainedDto>(id));
     }
+
     [Authorize]
     [HttpGet]
-    async public Task<ActionResult> GetAll([FromQuery] UserListDto userListDto)
+    async public Task<ActionResult> GetAll([FromQuery] UserByCompanyListDto userListDto)
     {
 
-        return Ok(await _userAppService.GetAll<UserListDto, UserListedDto>(userListDto));
+        return Ok(await _userAppService.GetAllByCompany(userListDto));
 
     }
 

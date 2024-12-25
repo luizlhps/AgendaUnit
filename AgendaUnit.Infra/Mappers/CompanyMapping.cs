@@ -15,7 +15,7 @@ public class CompanyMapping
         modelBuilder.Entity<Company>().Property(x => x.TypeCompany).HasColumnName(@"type_company").HasColumnType(@"text").IsRequired().ValueGeneratedNever();
         modelBuilder.Entity<Company>().Property(x => x.OwnerId).HasColumnName(@"owner_id").HasColumnType(@"int4").IsRequired().ValueGeneratedNever();
         modelBuilder.Entity<Company>().Property(x => x.Timestamp).HasColumnName(@"timestamp").HasColumnType(@"timestamptz").IsRequired().ValueGeneratedNever();
-        modelBuilder.Entity<Company>().Property(x => x.IsDeleted).HasColumnName(@"isdeleted").HasColumnType(@"bool").IsRequired().ValueGeneratedNever();
+        modelBuilder.Entity<Company>().Property(x => x.IsDeleted).HasColumnName(@"isdeleted").HasColumnType(@"bool").IsRequired().HasDefaultValue(true);
         modelBuilder.Entity<Company>().HasKey(c => c.Id);
 
 

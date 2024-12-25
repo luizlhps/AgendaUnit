@@ -9,34 +9,24 @@ public class SchedulingListedDto
 {
     public int Id { get; set; }
 
-    public DateTime Date { get; set; }
-
-    public string? Notes { get; set; }
-
     public int StatusId { get; set; }
-
-    public string? CancelNote { get; set; }
-
-    public decimal? TotalPrice { get; set; }
-
     public int StaffUserId { get; set; }
-
-    public int ServiceId { get; set; }
-
     public int CompanyId { get; set; }
-
     public int CustomerId { get; set; }
 
-    public bool IsDeleted { get; set; }
 
+    public DateTimeOffset Date { get; set; }
+    public string? Notes { get; set; }
     public TimeSpan Duration { get; set; }
+    public string? CancelNote { get; set; }
+    public double TotalPrice { get; set; }
+    public double Discount { get; set; }
+
+
 
     public virtual StatusDto Status { get; set; }
-
     public virtual CustomerDto Customer { get; set; }
-
     public List<SchedulingServiceDto>? SchedulingServices { get; set; }
-
     public virtual UserDto User { get; set; }
 
     [AutoMap(typeof(User), ReverseMap = true)]
@@ -46,9 +36,18 @@ public class SchedulingListedDto
 
         public string Username { get; set; }
 
-        public Role Role { get; set; }
+        public RoleDto Role { get; set; }
 
         public string Phone { get; set; }
+
+
+        [AutoMap(typeof(Role), ReverseMap = true)]
+        public class RoleDto
+        {
+            public string Name { get; set; }
+
+        }
+
     }
 
     [AutoMap(typeof(Customer), ReverseMap = true)]

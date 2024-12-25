@@ -16,5 +16,12 @@ public class UserListDto : QueryParams
     [CaseStringInsensitive]
     public string? Username { get; set; }
 
+    public CompanyDto? Company { get; set; }
+
+    [AutoMap(typeof(User), ReverseMap = true)]
+    public class CompanyDto : QueryParams
+    {
+        public int? Id { get; set; }
+    }
 
 }

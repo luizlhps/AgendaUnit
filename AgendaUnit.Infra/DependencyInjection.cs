@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<ICompanyAppService, CompanyAppService>();
         services.AddScoped<ICustomerAppService, CustomerAppService>();
         services.AddScoped<ISchedulingAppService, SchedulingAppService>();
+        services.AddScoped<ISchedulingServiceAppService, SchedulingServiceAppService>();
         services.AddScoped<IServiceAppService, ServiceAppService>();
         services.AddScoped<IUserAppService, UserAppService>();
         services.AddScoped<IAuthenticationManagerService, AuthenticationManagerService>();
@@ -48,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<ISchedulingRepository, SchedulingRepository>();
+        services.AddScoped<ISchedulingServiceRepository, SchedulingServiceRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IServiceRepository, ServiceRepository>();
 

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgendaUnit.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class alter_fields_sheduling : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,7 @@ namespace AgendaUnit.Infra.Migrations
                     type_company = table.Column<string>(type: "text", nullable: false),
                     owner_id = table.Column<int>(type: "int4", nullable: false),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    isdeleted = table.Column<bool>(type: "bool", nullable: false)
+                    isdeleted = table.Column<bool>(type: "bool", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -96,7 +96,7 @@ namespace AgendaUnit.Infra.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
                     duration = table.Column<TimeSpan>(type: "INTERVAL", nullable: false),
-                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    price = table.Column<double>(type: "double precision", nullable: false),
                     ativo = table.Column<bool>(type: "boolean", nullable: false),
                     status_id = table.Column<int>(type: "integer", nullable: false),
                     company_id = table.Column<int>(type: "int4", nullable: false),
@@ -133,9 +133,9 @@ namespace AgendaUnit.Infra.Migrations
                     password = table.Column<string>(type: "text", nullable: false),
                     role_id = table.Column<int>(type: "integer", nullable: false),
                     recovery_token = table.Column<string>(type: "text", nullable: true),
-                    recovery_expiry_time = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    recovery_expiry_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     refresh_token = table.Column<string>(type: "text", nullable: true),
-                    refresh_token_expiry_time = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    refresh_token_expiry_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     phone = table.Column<string>(type: "text", nullable: false),
                     company_id = table.Column<int>(type: "int4", nullable: true),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -169,12 +169,13 @@ namespace AgendaUnit.Infra.Migrations
                     staff_user_id = table.Column<int>(type: "int4", nullable: false),
                     company_id = table.Column<int>(type: "int4", nullable: false),
                     customer_id = table.Column<int>(type: "int4", nullable: false),
-                    date = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    date = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
                     notes = table.Column<string>(type: "text", nullable: true),
-                    duration = table.Column<TimeSpan>(type: "interval(6)", precision: 6, nullable: false, defaultValueSql: "'00:00:00'"),
+                    duration = table.Column<TimeSpan>(type: "interval(6)", precision: 6, nullable: false),
                     cancel_note = table.Column<string>(type: "text", nullable: true),
-                    total_price = table.Column<decimal>(type: "numeric", nullable: true),
-                    isdeleted = table.Column<bool>(type: "bool", nullable: false),
+                    total_price = table.Column<double>(type: "double precision", nullable: false),
+                    discount = table.Column<double>(type: "double precision", nullable: false),
+                    isdeleted = table.Column<bool>(type: "bool", nullable: false, defaultValue: false),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
@@ -215,10 +216,9 @@ namespace AgendaUnit.Infra.Migrations
                     service_id = table.Column<int>(type: "integer", nullable: false),
                     scheduling_id = table.Column<int>(type: "int4", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
+                    duration = table.Column<TimeSpan>(type: "interval", nullable: false),
                     price = table.Column<double>(type: "double precision", nullable: false),
-                    total_price = table.Column<double>(type: "double precision", nullable: false),
-                    discount = table.Column<double>(type: "double precision", nullable: false),
-                    isdeleted = table.Column<bool>(type: "bool", nullable: false)
+                    isdeleted = table.Column<bool>(type: "bool", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
