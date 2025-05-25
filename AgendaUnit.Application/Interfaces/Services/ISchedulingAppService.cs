@@ -11,5 +11,6 @@ public interface ISchedulingAppService : ICrudAppService<Scheduling>
 {
     Task<PageResult<SchedulingListedDto>> GetAllSchedulesByCompany(SchedulingListDto schedulingListDto);
     Task<SchedulingByCompanyCreatedDto> CreateByCompany(SchedulingByCompanyCreateDto schedulingByCompanyCreateDto);
+    Task<SchedulingByCompanyUpdatedDto> UpdateByCompany(SchedulingByCompanyUpdateDto schedulingByCompanyUpdateDto);
 
 }

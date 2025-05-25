@@ -4,7 +4,7 @@ using AutoMapper;
 namespace AgendaUnit.Application.DTO.SchedulingServiceDto;
 
 [AutoMap(typeof(SchedulingService), ReverseMap = true)]
-public class SchedulingServiceCreatedDto
+public class SchedulingServiceUpdatedDto
 {
     public int Id { get; set; }
     public int ServiceId { get; set; }

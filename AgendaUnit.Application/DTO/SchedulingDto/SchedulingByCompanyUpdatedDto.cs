@@ -4,7 +4,7 @@ using AutoMapper;
 namespace AgendaUnit.Application.DTO.SchedulingDto;
 
 [AutoMap(typeof(Scheduling), ReverseMap = true)]
-public class SchedulingUpdatedDto
+public class SchedulingByCompanyUpdatedDto
 {
     public int Id { get; set; }
     public int StatusId { get; set; }
@@ -15,7 +15,6 @@ public class SchedulingUpdatedDto
     public DateTimeOffset Date { get; set; }
     public string? Notes { get; set; }
     public TimeSpan Duration { get; set; }
-    public string? CancelNote { get; set; }
     public double TotalPrice { get; set; }
     public double Discount { get; set; }
 }

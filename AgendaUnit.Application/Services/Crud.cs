@@ -60,7 +60,7 @@ namespace AgendaUnit.Domain.Services
         {
             var entity = _mapper.Map<TEntity>(inputDto);
 
-            var deletedEntity = await _unitOfWork.BaseRepository<TEntity>().Delete(entity.Id);
+            var deletedEntity = await _unitOfWork.BaseRepository<TEntity>().Delete(entity);
 
             //save changes
             if (isTransaction == null)

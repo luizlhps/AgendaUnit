@@ -7,9 +7,10 @@ public class SchedulingServiceMapping
 {
     public static void Configure(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<SchedulingService>().ToTable(@"scheduling_service", @"public");
+        modelBuilder.Entity<Scheduling>().HasKey(s => s.Id);
 
-        modelBuilder.Entity<SchedulingService>().HasKey(ss => new { ss.SchedulingId, ss.ServiceId });
+        modelBuilder.Entity<Scheduling>().Property(x => x.Id).HasColumnName(@"id").HasColumnType(@"int4").IsRequired().ValueGeneratedOnAdd();
+        modelBuilder.Entity<SchedulingService>().ToTable(@"scheduling_service", @"public");
 
         modelBuilder.Entity<SchedulingService>().Property(x => x.ServiceId).HasColumnName(@"service_id").IsRequired();
         modelBuilder.Entity<SchedulingService>().Property(x => x.SchedulingId).HasColumnName(@"scheduling_id").IsRequired();

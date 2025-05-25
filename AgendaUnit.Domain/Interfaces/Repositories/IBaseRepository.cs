@@ -11,5 +11,5 @@ public interface IBaseRepository<TEntity> where TEntity : class
     where TOutputDto : class;
     Task<TEntity> Create(TEntity entity);
     Task<TEntity> Update(TEntity entity);
-    Task<bool> Delete(int id);
+    Task<TEntity> Delete(TEntity entity);
 }

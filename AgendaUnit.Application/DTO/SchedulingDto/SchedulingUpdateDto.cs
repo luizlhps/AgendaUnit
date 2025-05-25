@@ -3,10 +3,10 @@ using AutoMapper;
 
 namespace AgendaUnit.Application.DTO.SchedulingDto;
 
-
 [AutoMap(typeof(Scheduling), ReverseMap = true)]
-public class SchedulingCreateDto
+public class SchedulingUpdateDto
 {
+    public int Id { get; set; }
     public int StatusId { get; set; }
     public int StaffUserId { get; set; }
     public int CompanyId { get; set; }

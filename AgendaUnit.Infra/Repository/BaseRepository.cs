@@ -51,15 +51,66 @@ namespace AgendaUnit.Infrastructure.Repositories
             return existingEntity;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<TEntity> Delete(TEntity entity)
         {
-            var entity = await _appDbContext.Set<TEntity>().FindAsync(id);
-            if (entity == null)
-                return false;
+            TEntity entityFinded = null;
 
-            _appDbContext.Set<TEntity>().Remove(entity);
+            #region find entity
+
+            var keyProperties = _appDbContext.Model
+                .FindEntityType(typeof(TEntity))?
+                .FindPrimaryKey()?
+                .Properties;
+
+            //composite key 
+            if (keyProperties.Count > 1)
+            {
+                IQueryable<TEntity> query = _appDbContext.Set<TEntity>();
+
+                foreach (var keyProperty in keyProperties)
+                {
+                    var keyValue = typeof(TEntity).GetProperty(keyProperty.Name)?.GetValue(entity);
+
+                    query = query.Where(item => EF.Property<bool>(item, keyProperty.Name).Equals(keyValue));
+                    continue;
+                }
+
+                entityFinded = await query.FirstAsync();
+            }
+            else
+            {
+                var keyName = keyProperties?.FirstOrDefault()?.Name;
+                var keyValue = typeof(TEntity).GetProperty(keyName)?.GetValue(entity);
+
+                if (keyValue == null || keyValue.Equals(0))
+                {
+                    throw new ConflictException($"A entidade não possui um valor válido para a chave '{keyName}'.");
+                }
+
+                entityFinded = await _appDbContext.Set<TEntity>().FindAsync(keyValue);
+            }
+
+            if (entityFinded == null)
+                return null;
+
+            #endregion
+
+
+            var isDeletedProperty = typeof(TEntity).GetProperty("IsDeleted");
+
+            if (isDeletedProperty != null)
+            {
+                // Soft delete
+                isDeletedProperty.SetValue(entityFinded, true);
+                _appDbContext.Entry(entityFinded).State = EntityState.Modified;
+            }
+            else
+            {
+                // Hard delete
+                _appDbContext.Set<TEntity>().Remove(entityFinded);
+            }
             // await _appDbContext.SaveChangesAsync();
-            return true;
+            return entityFinded;
         }
 
         async public Task<PageResult<TOutputDto>> GetAll<TInputDto, TOutputDto>(TInputDto inputDto)

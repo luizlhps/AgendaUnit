@@ -33,4 +33,12 @@ public class SchedulingController : ControllerBase
         return Ok(await _schedulingAppService.CreateByCompany(schedulingByCompanyCreateDto));
     }
 
+    [Authorize]
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] SchedulingByCompanyUpdateDto schedulingByCompanyUpdateDto)
+    {
+        schedulingByCompanyUpdateDto.Id = id;
+        return Ok(await _schedulingAppService.UpdateByCompany(schedulingByCompanyUpdateDto));
+    }
+
 }

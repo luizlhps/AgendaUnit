@@ -21,6 +21,7 @@ public class ServiceListedDto
     [AutoMap(typeof(Status), ReverseMap = true)]
     public class StatusDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 

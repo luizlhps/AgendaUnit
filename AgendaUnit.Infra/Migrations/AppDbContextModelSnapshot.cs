@@ -225,21 +225,16 @@ namespace AgendaUnit.Infra.Migrations
 
             modelBuilder.Entity("AgendaUnit.Domain.Models.SchedulingService", b =>
                 {
-                    b.Property<int>("SchedulingId")
-                        .HasColumnType("int4")
-                        .HasColumnName("scheduling_id");
-
-                    b.Property<int>("ServiceId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("service_id");
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("interval")
                         .HasColumnName("duration");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -256,14 +251,25 @@ namespace AgendaUnit.Infra.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("price");
 
+                    b.Property<int>("SchedulingId")
+                        .HasColumnType("int4")
+                        .HasColumnName("scheduling_id");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer")
+                        .HasColumnName("service_id");
+
                     b.Property<DateTimeOffset>("Timestamp")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.HasKey("SchedulingId", "ServiceId")
+                    b.HasKey("Id")
                         .HasName("pk_scheduling_service");
+
+                    b.HasIndex("SchedulingId")
+                        .HasDatabaseName("ix_scheduling_service_scheduling_id");
 
                     b.HasIndex("ServiceId")
                         .HasDatabaseName("ix_scheduling_service_service_id");
